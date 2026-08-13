@@ -364,7 +364,10 @@ test("el Mundo Pollito existe, es de la marca y va por klein", () => {
   const pollito = findStyle("pollito");
   assert.equal(pollito.backend, "klein");
   assert.equal(DEFAULT_STYLE_ID, "pollito");
-  for (const word of ["hot pink", "chick", "kawaii"]) {
+  // Las señas de identidad de la marca, tal cual las referencias: contorno
+  // marrón grueso, trama de puntos, pollitos, rosa, y la capucha de pollito
+  // sobre la persona.
+  for (const word of ["brown outline", "halftone", "chick", "pink", "hoodie", "cartoon"]) {
     assert.ok(pollito.prompt.toLowerCase().includes(word), `falta «${word}» en el prompt`);
   }
 });

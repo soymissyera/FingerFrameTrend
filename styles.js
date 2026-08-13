@@ -78,14 +78,24 @@ export const STYLES = [
   },
   {
     // El estilo propio de la marca Miss Yera. Este es el diferencial.
+    //
+    // El prompt está calcado de las referencias de la marca: contorno marrón
+    // oscuro y grueso, color plano de cómic, trama de medios tonos, pollitos
+    // amarillo mantequilla con mofletes rosas, y el pueblo de casas huevo con
+    // techos rosas. A la persona la convierte en personaje de dibujo con la
+    // capucha de pollito, conservando el pelo rojo oscuro.
     id: "pollito",
     label: "Mundo Pollito",
     backend: "klein",
     prompt:
-      "Turn this into the cute Pollito world: kawaii illustrated scene in " +
-      "hot pink and white, adorable fluffy yellow baby chicks floating " +
-      "around, soft puffy clouds, clean flat vector shapes, gentle pastel " +
-      "highlights, sparkles, cheerful tender storybook look.",
+      "Turn this into the Mundo Pollito cartoon world: bold dark brown " +
+      "outlines on everything, flat cel-shaded colors, halftone dot shading, " +
+      "clean sticker linework. Make the person a cute cartoon character with " +
+      "big glossy eyes, pink blushed cheeks and dark red wavy hair, wearing a " +
+      "butter-yellow baby chick hoodie with a small orange beak and dot eyes " +
+      "on the hood. Behind, a village of egg-shaped houses with pink domed " +
+      "roofs, pink and yellow triangle bunting across a bright blue sky, " +
+      "fluffy white clouds, and chubby yellow baby chicks with rosy cheeks.",
     // El respaldo local se tiñe de rosa con una mezcla, no con un giro de
     // tono: así sale rosa pase lo que pase delante de la cámara.
     filter: "saturate(0.3) brightness(1.2) contrast(1.05)",

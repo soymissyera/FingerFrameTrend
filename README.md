@@ -8,6 +8,9 @@ se ve dentro del marco es el mundo IA.
 Todo corre en el navegador desde una página estática: sin build, sin backend,
 sin frameworks. La clave de fal la pones tú y se queda en tu navegador.
 
+**En vivo:** <https://soymissyera.github.io/mundo-pollito/>
+**Modo demo, sin cámara:** <https://soymissyera.github.io/mundo-pollito/?demo>
+
 ## Cómo se prueba
 
 En este orden, que es el que va de gratis y sin permisos a la experiencia
@@ -198,6 +201,8 @@ así que generar sin gesto es tirar el dinero. Con el ahorro puesto:
 Cualquier servidor estático sirve, no hay nada que compilar:
 
 ```bash
+git clone https://github.com/soymissyera/mundo-pollito.git
+cd mundo-pollito
 python3 -m http.server 8125
 ```
 

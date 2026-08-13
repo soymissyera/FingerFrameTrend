@@ -93,6 +93,9 @@ export function createUI({ onStyle, onSettings, onEconomy, styleId, settings }) 
     if (idx >= 0 && idx < STYLES.length) select(STYLES[idx].id);
     if (ev.key === "Escape") panel.classList.add("hidden");
     if (ev.key.toLowerCase() === "o") toggleClean();
+    if (ev.key.toLowerCase() === "v") toggleVertical();
+    if (ev.key === "+" || ev.key === "=") setZoom(zoom + 0.1);
+    if (ev.key === "-" || ev.key === "_") setZoom(zoom - 0.1);
   });
 
   // Modo grabación: fuera todo menos el video y el marco. El aviso se
@@ -101,6 +104,33 @@ export function createUI({ onStyle, onSettings, onEconomy, styleId, settings }) 
     const clean = document.body.classList.toggle("limpio");
     if (clean) toast("Interfaz oculta · pulsa O para recuperarla");
     else hideToast();
+  }
+
+  // Formato vertical 9:16, listo para subir sin reencuadrar.
+  const stage = el("stage");
+  let zoom = 1;
+  const ZOOM_MIN = 1;
+  const ZOOM_MAX = 2.4;
+
+  function toggleVertical() {
+    const vertical = document.body.classList.toggle("vertical");
+    toast(
+      vertical
+        ? "Vertical 9:16 · + y − para acercar · V para volver"
+        : "Formato horizontal"
+    );
+  }
+
+  function setZoom(next) {
+    if (!document.body.classList.contains("vertical")) return;
+    zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, Math.round(next * 20) / 20));
+    stage.style.setProperty("--zoom", zoom);
+    toast(
+      zoom === ZOOM_MIN
+        ? "Encuadre completo, sin recortar"
+        : `Zoom ${zoom.toFixed(2)}× · recorta ${Math.round((1 - 1 / zoom) * 100)} % de los lados`,
+      1600
+    );
   }
 
   let toastTimer = null;
@@ -198,5 +228,6 @@ export function createUI({ onStyle, onSettings, onEconomy, styleId, settings }) 
     },
     toast,
     toggleClean,
+    toggleVertical,
   };
 }

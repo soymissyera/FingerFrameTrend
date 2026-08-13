@@ -60,6 +60,8 @@ el encuadre completo y el recorte es 100% local.
 | 7 | **Mundo Pollito** | FLUX.2 klein |
 | 8 | Personalizado | el que elijas |
 | O | Ocultar o mostrar la interfaz (modo grabación) | — |
+| V | Formato vertical 9:16 | — |
+| + − | Zoom dentro del marco vertical | — |
 
 El **Mundo Pollito** es el estilo propio de la marca: mundo ilustrado tierno
 en rosa y blanco, pollitos amarillos, nubes esponjosas, estética kawaii
@@ -77,9 +79,28 @@ solo botón. Pulsa **O** otra vez para recuperarla.
 Al ocultar aparece un aviso recordando la tecla, que se desvanece solo a los
 dos segundos y medio. Espera a que se vaya antes de empezar a grabar.
 
+### Formato vertical para TikTok e Instagram
+
+La tecla **V** pasa a 9:16 con el rosa de la marca arriba y abajo, dejando
+sitio para los títulos.
+
+El video sigue siendo 16:9 a propósito: el gesto necesita las dos manos
+separadas, y recortar a vertical las dejaría fuera de cuadro. Por eso el 16:9
+se encaja dentro del 9:16 en vez de recortarse.
+
+Con **+** y **−** se acerca el encuadre dentro del marco vertical, de 1× a
+2,4×. Más zoom llena más pantalla pero recorta por los lados, y el aviso te
+dice cuánto: a 1,6× recorta el 38 %. Sube el zoom hasta justo antes de que se
+te salgan las manos. Si haces el marco cerca del cuerpo, aguanta más zoom.
+
+Ponte en pantalla completa antes de grabar: en vertical el ancho del video es
+el 56 % de la altura de la ventana, así que cuanta más altura, más resolución
+sale en el archivo final.
+
 Orden recomendado: deja el estilo listo, comprueba en la pastilla que está
-generando, pulsa O, espera a que se vaya el aviso, y recién ahí graba la
-pantalla (en Mac, Cmd+Shift+5).
+generando, pantalla completa, V, ajusta el zoom con + y −, pulsa O, espera a
+que se vaya el aviso, y recién ahí graba la pantalla (en Mac, Cmd+Shift+5,
+grabando solo la porción vertical rosa).
 
 ## Tu clave de fal
 

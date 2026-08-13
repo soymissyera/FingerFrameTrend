@@ -233,6 +233,34 @@
       opacity: 0.5; font-weight: 700; margin-left: 7px;
       font-size: 9.5px; letter-spacing: 0.06em; vertical-align: 1px;
     }
+    /* ---- formato vertical 9:16 para TikTok e Instagram ----
+       El video sigue siendo 16:9 porque el gesto necesita las dos manos
+       separadas y un recorte vertical las dejaría fuera de cuadro. Así que en
+       vez de recortar, se encaja el 16:9 dentro de un lienzo 9:16 con el rosa
+       de la marca arriba y abajo, que además deja sitio para los títulos. */
+    body.vertical #stage {
+      inset: auto;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(100vw, calc(100vh * 9 / 16));
+      height: min(100vh, calc(100vw * 16 / 9));
+      background: linear-gradient(165deg, #ff2e88 0%, #ff6fae 52%, #ffd9ea 100%);
+      overflow: hidden;
+    }
+    body.vertical #stage { --zoom: 1; }
+    body.vertical canvas {
+      width: 100%;
+      height: auto;
+      max-width: none;
+      max-height: none;
+      border-radius: 0;
+      /* Acercar recorta por los lados, así que lo decide quien graba: más
+         zoom llena más el vertical, menos zoom conserva las manos abiertas. */
+      transform: scale(var(--zoom));
+      transform-origin: center;
+    }
+
     /* ---- modo grabación: solo el video y el marco ---- */
     body.limpio #hud,
     body.limpio #toolbar,
@@ -332,10 +360,15 @@
 
     <h3>Grabación</h3>
     <p>
-      Pulsa <strong>O</strong> para ocultar toda la interfaz y grabar limpio:
-      se van los indicadores, la barra de estilos y hasta el puntero del ratón.
-      Las teclas 1 a 8 siguen cambiando de estilo con la interfaz oculta.
-      Pulsa <strong>O</strong> otra vez para recuperarla.
+      <strong>O</strong> oculta toda la interfaz para grabar limpio: se van los
+      indicadores, la barra de estilos y hasta el puntero del ratón. Las teclas
+      1 a 8 siguen cambiando de estilo con la interfaz oculta.
+    </p>
+    <p>
+      <strong>V</strong> pasa a formato vertical 9:16 para TikTok e Instagram,
+      con el fondo rosa de la marca arriba y abajo para tus títulos. Pon la
+      pantalla completa antes, así el video sale con la mayor resolución
+      posible. Las dos teclas se combinan.
     </p>
 
     <h3>Estilo personalizado</h3>

@@ -24,6 +24,7 @@ import { STYLES, DEFAULT_STYLE_ID, findStyle, backendFor, promptFor } from "./st
 import { createHandLandmarker, CAMERA_CONSTRAINTS } from "./hands.js";
 import { DEMO, makeDemoStream, makeFakeHands } from "./demo.js";
 import { createUI, loadSettings } from "./ui.js";
+import { Grabadora } from "./grabacion.js";
 
 const video = document.getElementById("video");
 const lucyVideo = document.getElementById("lucy");
@@ -69,6 +70,7 @@ const ui = createUI({
       1500
     );
   },
+  onGrabar: () => grabadora.toggle(),
   onArrastre: (v) => {
     const n = backends.setFeedback(v);
     localStorage.setItem("fal-klein-feedback", String(n));
@@ -88,6 +90,35 @@ const ui = createUI({
     // tomen efecto de verdad y no queden colgando de la conexión anterior.
     backends.stopAll();
     syncBackend();
+  },
+});
+
+// Grabar el canvas, no la pantalla: el archivo sale sin interfaz ni puntero.
+const grabadora = new Grabadora({
+  canvas,
+  encuadre: () => ({ vertical: ui.vertical, zoom: ui.zoom }),
+  // El mismo degradado de marca que el telón del formato vertical.
+  fondo: (ctx, lienzo) => {
+    const g = ctx.createLinearGradient(0, 0, lienzo.w * 0.4, lienzo.h);
+    g.addColorStop(0, "#fb8cd4");
+    g.addColorStop(0.52, "#ff9ede");
+    g.addColorStop(1, "#ffd9f0");
+    return g;
+  },
+  onEstado: (estado, datos = {}) => {
+    if (estado === "grabando") {
+      ui.toast(
+        datos.vertical
+          ? "Grabando en 9:16 · R o el botón para parar"
+          : "Grabando en horizontal · pulsa V antes si lo quieres vertical",
+        2400
+      );
+    } else if (estado === "guardado") {
+      ui.toast(`Descargado ${datos.nombre} · ${datos.megas.toFixed(1)} MB`, 4000);
+    } else if (estado === "error") {
+      ui.toast(datos.mensaje, 4000);
+    }
+    ui.setGrabando(grabadora.grabando, grabadora.segundos);
   },
 });
 
@@ -186,7 +217,8 @@ function loop() {
     });
   }
 
-  ui.showHint(tracker.presence <= 0.5);
+  ui.showHint(tracker.presence <= 0.5 && !grabadora.grabando);
+  if (grabadora.grabando) ui.setGrabando(true, grabadora.segundos);
   updateStats();
   requestAnimationFrame(loop);
 }

@@ -29,6 +29,13 @@ import {
   LUCY_IDLE_TAIL_MS,
   PRECIOS_USD,
 } from "../backends.js";
+import {
+  encuadreExport,
+  mejorFormato,
+  extensionDe,
+  nombreArchivo,
+  EXPORT_VERTICAL,
+} from "../grabacion.js";
 import { makeFakeHands } from "../demo.js";
 import { STYLES, findStyle, backendFor, promptFor, DEFAULT_STYLE_ID } from "../styles.js";
 
@@ -520,6 +527,60 @@ test("sin clave el ahorro no toca nada", () => {
   advance(9999);
   m.setDemand(false);
   assert.equal(m.kleinPaused, false);
+});
+
+// ------------------------------------------------------------- grabación
+group("Grabación");
+
+test("el vertical sale en 1080x1920, listo para subir", () => {
+  const e = encuadreExport({ vertical: true, zoom: 1, srcW: 1280, srcH: 720 });
+  assert.deepEqual(e.lienzo, EXPORT_VERTICAL);
+  assert.equal(e.dw, 1080, "el video ocupa todo el ancho");
+  assert.equal(e.dh, 607.5, "y conserva la proporción de la cámara");
+  assert.equal(e.dx, 0);
+  // Bandas iguales arriba y abajo para los títulos.
+  assert.ok(Math.abs(e.dy - (1920 - 607.5) / 2) < 1e-9);
+});
+
+test("el zoom del vertical agranda el video y recorta por los lados", () => {
+  const e = encuadreExport({ vertical: true, zoom: 1.6, srcW: 1280, srcH: 720 });
+  assert.ok(Math.abs(e.dw - 1728) < 1e-9);
+  assert.ok(e.dx < 0, "se sale por los lados a propósito, como en pantalla");
+  assert.ok(Math.abs(e.dx * 2 + e.dw - 1080) < 1e-9, "sigue centrado");
+});
+
+test("el horizontal encaja entero sin recortar", () => {
+  const e = encuadreExport({ vertical: false, zoom: 1, srcW: 1280, srcH: 720 });
+  assert.deepEqual([e.dw, e.dh], [1920, 1080]);
+  assert.deepEqual([e.dx, e.dy], [0, 0]);
+  // Y con una cámara más cuadrada, se ajusta por el alto en vez de por el ancho.
+  const c = encuadreExport({ vertical: false, zoom: 1, srcW: 640, srcH: 640 });
+  assert.equal(c.dh, 1080);
+  assert.equal(c.dw, 1080);
+  assert.ok(c.dx > 0, "queda centrado con bandas a los lados");
+});
+
+test("se prefiere mp4, que es lo que traga Instagram sin convertir", () => {
+  assert.ok(mejorFormato(() => true).startsWith("video/mp4"));
+  // Si el navegador solo sabe webm, se usa webm en vez de rendirse.
+  assert.equal(mejorFormato((t) => t.includes("webm")), "video/webm;codecs=vp9");
+  assert.equal(mejorFormato(() => false), "");
+});
+
+test("nunca se pide mp4 sin codec: ese contenedor sale vacío", () => {
+  // Chromium sin codificador H.264 declara soportado "video/mp4" a secas y
+  // luego devuelve un archivo que no abre ni ffmpeg. Comprobado a mano.
+  const pedido = [];
+  mejorFormato((t) => { pedido.push(t); return false; });
+  assert.ok(!pedido.includes("video/mp4"), "no debe consultarse mp4 pelado");
+  assert.ok(pedido.every((t) => t.includes("codecs=")), "todos con codec explícito");
+});
+
+test("la extensión y el nombre acompañan al formato", () => {
+  assert.equal(extensionDe("video/mp4;codecs=avc1.42E01E"), "mp4");
+  assert.equal(extensionDe("video/webm;codecs=vp9"), "webm");
+  const n = nombreArchivo(new Date(2026, 7, 14, 9, 5, 3), "video/mp4");
+  assert.equal(n, "mundo-pollito-2026-08-14-090503.mp4");
 });
 
 // ------------------------------------------------------ contador de gasto

@@ -62,7 +62,7 @@ function esCampoDeTexto(el) {
   return !["range", "checkbox", "radio", "button"].includes(el.type);
 }
 
-export function createUI({ onStyle, onSettings, onEconomy, onSteps, onArrastre, styleId, settings }) {
+export function createUI({ onStyle, onSettings, onEconomy, onSteps, onArrastre, onGrabar, styleId, settings }) {
   const el = (id) => document.getElementById(id);
   const toolbar = el("toolbar");
   const panel = el("key-panel");
@@ -118,6 +118,9 @@ export function createUI({ onStyle, onSettings, onEconomy, onSteps, onArrastre, 
     } else if (key === "v") {
       ev.preventDefault();
       toggleVertical();
+    } else if (key === "r") {
+      ev.preventDefault();
+      onGrabar();
     } else if (ev.key === "," || ev.key === "<") {
       ev.preventDefault();
       onSteps(Number(pasosInput.value) - 1);
@@ -167,6 +170,11 @@ export function createUI({ onStyle, onSettings, onEconomy, onSteps, onArrastre, 
       1600
     );
   }
+
+  // Grabar: el botón y la tecla R hacen lo mismo.
+  const recBtn = el("rec-btn");
+  const recTexto = el("rec-texto");
+  recBtn.addEventListener("click", () => onGrabar());
 
   let toastTimer = null;
   const toastEl = el("toast");
@@ -277,6 +285,24 @@ export function createUI({ onStyle, onSettings, onEconomy, onSteps, onArrastre, 
     setSteps(n) {
       pasosInput.value = String(n);
       pasosValor.textContent = String(n);
+    },
+    /** Pinta el botón según esté grabando, con el reloj de la toma. */
+    setGrabando(grabando, segundos = 0) {
+      recBtn.classList.toggle("grabando", grabando);
+      if (!grabando) {
+        recTexto.textContent = "Grabar";
+        return;
+      }
+      const m = Math.floor(segundos / 60);
+      const s = Math.floor(segundos % 60);
+      recTexto.textContent = `Parar · ${m}:${String(s).padStart(2, "0")}`;
+    },
+    /** ¿Está el formato vertical puesto? Lo necesita la grabadora. */
+    get vertical() {
+      return document.body.classList.contains("vertical");
+    },
+    get zoom() {
+      return zoom;
     },
     setArrastre(v) {
       arrastreInput.value = String(v);

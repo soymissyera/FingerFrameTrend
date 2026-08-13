@@ -190,6 +190,49 @@
       padding: 5px 11px;
     }
 
+    /* ---- grabar y repositorio ---- */
+    #rec-btn {
+      appearance: none;
+      border: 1px solid rgba(255, 90, 90, 0.4);
+      background: rgba(40, 20, 26, 0.8);
+      backdrop-filter: blur(12px);
+      color: #ffd9d9;
+      border-radius: 12px;
+      padding: 11px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 8px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    #rec-btn:hover { background: rgba(60, 26, 34, 0.9); }
+    #rec-btn .rec-punto {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #ff5a5a; flex: none;
+    }
+    #rec-btn.grabando {
+      background: #ff4d4d; border-color: #ff4d4d; color: #fff;
+    }
+    #rec-btn.grabando .rec-punto {
+      background: #fff; border-radius: 2px;
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+
+    #repo-btn {
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--line);
+      background: rgba(20, 20, 24, 0.72);
+      backdrop-filter: blur(12px);
+      border-radius: 12px;
+      padding: 9px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.78);
+      text-decoration: none;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    #repo-btn:hover { background: var(--pink-soft); border-color: rgba(251, 140, 212, 0.45); }
+
     /* ---- botón y panel de la clave ---- */
     #key-btn {
       appearance: none;
@@ -396,6 +439,13 @@
       <div class="extremos"><span>más estable</span><span>te sigue antes</span></div>
     </div>
 
+    <button id="rec-btn" type="button">
+      <span class="rec-punto"></span><span id="rec-texto">Grabar</span>
+    </button>
+
+    <a id="repo-btn" href="https://github.com/soymissyera/FingerFrameTrend#readme"
+       target="_blank" rel="noopener">Ver el repositorio</a>
+
     <div id="hud">
       <div id="live-pill" class="chip"><span class="dot"></span><span id="live-text"></span></div>
       <div id="stats" class="chip"></div>
@@ -434,7 +484,7 @@
       </span>
     </label>
     <p class="note">
-      <strong>Versión 2026-08-14 · 00:30</strong> — si esta fecha no cambia
+      <strong>Versión 2026-08-14 · 01:00</strong> — si esta fecha no cambia
       después de recargar, tu navegador te está sirviendo una copia vieja:
       recarga con Cmd+Shift+R.
     </p>
@@ -448,8 +498,14 @@
 
     <h3>Grabación</h3>
     <p>
-      <strong>O</strong> oculta toda la interfaz para grabar limpio: se van los
-      indicadores, la barra de estilos y hasta el puntero del ratón. Las teclas
+      El botón <strong>Grabar</strong> (o la tecla <strong>R</strong>) graba el
+      video directamente, sin grabar la pantalla: el archivo sale sin interfaz,
+      sin puntero y ya en 9:16 con el fondo de la marca si tienes puesto el
+      formato vertical. Al parar se descarga solo. No lleva audio.
+    </p>
+    <p>
+      <strong>O</strong> oculta toda la interfaz. Con el botón de grabar ya no
+      hace falta, pero sirve si prefieres grabar la pantalla a mano. Las teclas
       1 a 9 siguen cambiando de estilo con la interfaz oculta.
     </p>
     <p>

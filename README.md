@@ -91,6 +91,20 @@ de la llave.
 
 ## Grabar para redes
 
+**Botón Grabar** en la columna derecha, o la tecla **R**. No graba la pantalla:
+graba el canvas, que es el video con el efecto y nada más. Por eso el archivo
+sale sin interfaz, sin puntero y sin que haga falta esconder nada, y por eso
+puedes seguir tocando los controles mientras grabas sin que salgan en la toma.
+
+Si tienes puesto el formato vertical, el archivo sale directamente en
+**1080x1920** con el degradado rosa de la marca arriba y abajo, listo para
+subir a Instagram o TikTok sin reencuadrar. En horizontal sale 1920x1080. Al
+parar se descarga solo, con la fecha en el nombre.
+
+El formato es mp4 si el navegador sabe codificar H.264, y webm si no. Los dos
+los importa CapCut sin problema. **No lleva audio**: el canvas no tiene sonido,
+así que la música se pone al editar.
+
 Los controles viven en dos columnas a los lados, nunca encima del video: los
 estilos a la izquierda, y a la derecha la llave, la barrita de transformación
 y los indicadores. Así la cámara queda despejada y grabar es recortar el

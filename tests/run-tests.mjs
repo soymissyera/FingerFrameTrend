@@ -27,6 +27,7 @@ import {
   demandActive,
   KLEIN_IDLE_TAIL_MS,
   LUCY_IDLE_TAIL_MS,
+  PRECIOS_USD,
 } from "../backends.js";
 import { makeFakeHands } from "../demo.js";
 import { STYLES, findStyle, backendFor, promptFor, DEFAULT_STYLE_ID } from "../styles.js";
@@ -463,12 +464,12 @@ test("en pausa no se manda ni un cuadro, y el último se conserva", () => {
   assert.equal(m.kleinBitmap, "cuadro-previo", "y no descarta el último cuadro");
 });
 
-test("Lucy aguanta un minuto sin gesto antes de cortar, y vuelve sola", () => {
+test("Lucy aguanta un rato sin gesto antes de cortar, y vuelve sola", () => {
   const { m, advance, status } = fakeManager({ backend: "lucy" });
   m.setDemand(true);
-  advance(30000);
+  advance(LUCY_IDLE_TAIL_MS / 2);
   m.setDemand(false);
-  assert.ok(m.lucySession, "a los 30 s sigue conectada: reconectar cuesta caro");
+  assert.ok(m.lucySession, "un hueco corto no corta: reconectar cuesta segundos");
 
   advance(LUCY_IDLE_TAIL_MS);
   m.setDemand(false);
@@ -508,6 +509,58 @@ test("sin clave el ahorro no toca nada", () => {
   advance(9999);
   m.setDemand(false);
   assert.equal(m.kleinPaused, false);
+});
+
+// ------------------------------------------------------ contador de gasto
+group("Contador de gasto");
+
+test("los precios son los de las fichas de fal", () => {
+  assert.equal(PRECIOS_USD.lucy, 0.04, "por segundo conectado");
+  assert.equal(PRECIOS_USD.klein, 0.00194, "por segundo de cómputo");
+  // Lo que justifica que klein sea el estilo por defecto.
+  assert.ok(PRECIOS_USD.lucy > PRECIOS_USD.klein * 15, "Lucy es un orden de magnitud más cara");
+});
+
+test("un minuto de Lucy cuesta 2,40 y uno de klein 12 centavos", () => {
+  const lucy = fakeManager({ backend: "lucy" });
+  lucy.m.openLucyClock();
+  lucy.advance(60000);
+  assert.ok(Math.abs(lucy.m.spend.usd - 2.4) < 1e-9, `fue ${lucy.m.spend.usd}`);
+
+  const klein = fakeManager({ backend: "klein" });
+  klein.m.openKleinClock();
+  klein.advance(60000);
+  assert.ok(Math.abs(klein.m.spend.usd - 0.1164) < 1e-9, `fue ${klein.m.spend.usd}`);
+});
+
+test("en pausa el contador no corre: eso es lo que ahorra el modo ahorro", () => {
+  const { m, advance } = fakeManager({ backend: "klein" });
+  m.openKleinClock();
+  advance(10000); // 10 s generando
+  advance(0);
+  m.setDemand(false);
+  advance(KLEIN_IDLE_TAIL_MS + 1);
+  m.setDemand(false); // aquí se pausa y se cierra el reloj
+  const alPausar = m.spend.usd;
+  advance(600000); // diez minutos con la pestaña abierta y sin gesto
+  assert.equal(m.spend.usd, alPausar, "sin marco no se gasta nada");
+
+  m.setDemand(true); // vuelve el marco
+  advance(10000);
+  assert.ok(m.spend.usd > alPausar, "y al volver, vuelve a contar");
+});
+
+test("el reloj acumula tramos y no cuenta dos veces al abrirlo repetido", () => {
+  const { m, advance } = fakeManager({ backend: "lucy" });
+  m.openLucyClock();
+  advance(5000);
+  m.openLucyClock(); // abrir de nuevo no debe reiniciar ni duplicar
+  advance(5000);
+  m.closeLucyClock();
+  advance(90000); // cerrado: no corre
+  assert.ok(Math.abs(m.spend.lucySeconds - 10) < 1e-9, `fueron ${m.spend.lucySeconds} s`);
+  m.closeLucyClock(); // cerrar dos veces tampoco suma
+  assert.ok(Math.abs(m.spend.lucySeconds - 10) < 1e-9);
 });
 
 // -------------------------------------------------------------- indicadores

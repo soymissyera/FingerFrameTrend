@@ -129,10 +129,22 @@ pégala en el panel de la llave, arriba a la derecha.
 - Tu video no se guarda ni se sube a ningún sitio fuera de la llamada al
   modelo. Las carpetas de capturas están en `.gitignore`.
 
-**Costos.** Lucy se cobra por tiempo de sesión conectada y klein por cuadro
-generado, a 8 cuadros por segundo. La app nunca deja una sesión de Lucy
-abierta de fondo: al cambiar a un estilo klein o cerrar la pestaña, se
-desconecta. Sin clave, todos los estilos caen a un filtro local gratuito.
+**Costos.** Precios de las fichas de fal a 13 de agosto de 2026:
+
+| Modelo | Precio | Por minuto |
+|---|---|---|
+| Lucy 2.5 | $0.04 por segundo conectada | **$2.40** |
+| FLUX.2 klein | $0.00194 por segundo de cómputo | **~$0.12** |
+
+Lucy cuesta unas veinte veces más que klein, y por eso el estilo que abre por
+defecto es el de klein. La app nunca deja una sesión de Lucy abierta de fondo:
+al cambiar a un estilo klein o cerrar la pestaña, se desconecta. Sin clave,
+todos los estilos caen a un filtro local gratuito.
+
+El indicador de arriba a la izquierda estima el gasto de la sesión contando el
+tiempo que cada backend está trabajando de verdad. Es una estimación para no
+enterarse por la factura; la cifra que manda es la del panel de fal. Si fal
+cambia los precios, se cambian en `PRECIOS_USD`, en `backends.js`.
 
 **Modo ahorro** (activado por defecto, se apaga en el panel de la llave). La
 ventana solo enseña el mundo IA cuando tienes el marco hecho con los dedos,
@@ -142,10 +154,11 @@ así que generar sin gesto es tirar el dinero. Con el ahorro puesto:
   para que rehacerlo se sienta instantáneo y un hueco de tracking no provoque
   parpadeo. Se conserva el último cuadro recibido, así que al volver a
   encuadrar la ventana no salta al filtro local.
-- **Lucy** aguanta un minuto sin gesto antes de cortar, porque reconectar por
-  WebRTC cuesta varios segundos; pasado ese minuto se desconecta y se reanuda
-  sola en cuanto vuelves a hacer el marco. Eso es lo que evita que una pestaña
-  olvidada siga facturando.
+- **Lucy** aguanta 20 segundos sin gesto antes de cortar, y se reanuda sola en
+  cuanto vuelves a hacer el marco. Ese plazo lo fija el precio, no la
+  comodidad: reconectar por WebRTC cuesta unos segundos y molesta, pero a
+  $2.40 el minuto esperar más sale mucho más caro. Es lo que evita que una
+  pestaña olvidada siga facturando.
 
 ## Cómo correrlo en tu máquina
 

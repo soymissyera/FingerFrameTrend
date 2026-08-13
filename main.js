@@ -200,11 +200,14 @@ function updateStats() {
   const fps = renderFps.tick(performance.now());
   const parts = [`${fps.toFixed(0)} fps de pantalla`];
   if (backends.ready && backends.backend === "klein" && modelMetrics.fps) {
-    parts.push(`${modelMetrics.fps.toFixed(1)} fps del modelo`);
-    parts.push(`${modelMetrics.latencyMs} ms de ida y vuelta`);
+    parts.push(`modelo ${modelMetrics.fps.toFixed(1)} fps`);
+    parts.push(`${modelMetrics.latencyMs} ms`);
   } else if (backends.ready && backends.backend === "lucy") {
     parts.push("Lucy en vivo por WebRTC");
   }
+  // Gasto estimado de la sesión, para no enterarse por la factura.
+  const { usd } = backends.spend;
+  if (usd > 0) parts.push(`~$${usd.toFixed(usd < 1 ? 3 : 2)} en esta sesión`);
   ui.setStats(parts.join(" · "));
 }
 

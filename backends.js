@@ -47,11 +47,25 @@ const LUCY_RETRY_MAX_MS = 30000;
 // Los dos backends se pausan distinto porque se cobran distinto:
 //  - klein va por cuadro, y reanudar cuesta un cuadro: se pausa enseguida,
 //    con una cola corta para que rehacer el marco se sienta instantáneo.
-//  - Lucy va por tiempo conectado, pero reconectar cuesta varios segundos de
-//    WebRTC: se aguanta un minuto sin gesto antes de cortar, que es lo que
-//    hace falta para no cobrar una pestaña olvidada.
+//  - Lucy va por tiempo conectado y reconectar cuesta varios segundos de
+//    WebRTC, así que se aguanta un rato sin gesto antes de cortar. Ese rato
+//    lo fija el precio, no la comodidad: ver LUCY_IDLE_TAIL_MS.
 export const KLEIN_IDLE_TAIL_MS = 1500;
-export const LUCY_IDLE_TAIL_MS = 60000;
+// 20 s y no 60: a 0,04 USD el segundo, cada minuto de Lucy sin gesto son 2,40
+// USD tirados. Reconectar cuesta unos segundos de WebRTC, molesto pero mucho
+// más barato que dejar el contador corriendo.
+export const LUCY_IDLE_TAIL_MS = 20000;
+
+// Precios de las fichas de los modelos en fal, consultados el 13 de agosto de
+// 2026. Sirven solo para el contador de la interfaz, que es una ESTIMACIÓN: la
+// cifra que manda es la del panel de fal. Si fal los cambia, se cambian aquí.
+export const PRECIOS_USD = {
+  // Por segundo de sesión conectada.
+  lucy: 0.04,
+  // Por segundo de cómputo. Mientras se generan cuadros sin parar, el cómputo
+  // va a la par del reloj, así que se cuenta el tiempo generando.
+  klein: 0.00194,
+};
 
 /** ¿Hay que seguir generando? Puro, para poder probarlo. */
 export function demandActive(gestureActive, lastActiveAt, now, tailMs) {
@@ -326,6 +340,43 @@ export class BackendManager {
     this.kleinCanvas = null;
     this.kleinLatencyMs = 0;
     this.kleinFrameTimes = [];
+
+    // Contador de gasto de la sesión. Se cuenta el tiempo que cada backend
+    // está de verdad trabajando; el modo ahorro se nota aquí directamente.
+    this.lucySeconds = 0;
+    this.lucySince = null;
+    this.kleinSeconds = 0;
+    this.kleinSince = null;
+  }
+
+  // ---- reloj del gasto ----
+  openLucyClock() {
+    this.lucySince ??= this.clock();
+  }
+  closeLucyClock() {
+    if (this.lucySince == null) return;
+    this.lucySeconds += (this.clock() - this.lucySince) / 1000;
+    this.lucySince = null;
+  }
+  openKleinClock() {
+    this.kleinSince ??= this.clock();
+  }
+  closeKleinClock() {
+    if (this.kleinSince == null) return;
+    this.kleinSeconds += (this.clock() - this.kleinSince) / 1000;
+    this.kleinSince = null;
+  }
+
+  /** Gasto estimado de esta sesión, en dólares y en segundos por backend. */
+  get spend() {
+    const now = this.clock();
+    const lucy = this.lucySeconds + (this.lucySince != null ? (now - this.lucySince) / 1000 : 0);
+    const klein = this.kleinSeconds + (this.kleinSince != null ? (now - this.kleinSince) / 1000 : 0);
+    return {
+      lucySeconds: lucy,
+      kleinSeconds: klein,
+      usd: lucy * PRECIOS_USD.lucy + klein * PRECIOS_USD.klein,
+    };
   }
 
   setKey(key) {
@@ -346,9 +397,11 @@ export class BackendManager {
       const wanted = demandActive(gestureActive, this.lastActiveAt, now, KLEIN_IDLE_TAIL_MS);
       if (!wanted && !this.kleinPaused) {
         this.kleinPaused = true;
+        this.closeKleinClock();
         this.onStatus("paused", "KLEIN EN PAUSA · AHORRO");
       } else if (wanted && this.kleinPaused) {
         this.kleinPaused = false;
+        this.openKleinClock();
         this.onStatus("live", "KLEIN · GENERANDO…");
       }
       return;
@@ -470,6 +523,7 @@ export class BackendManager {
       onStateChange: (state) => {
         if (state !== "idle") return;
         this.lucyLive = false;
+        this.closeLucyClock();
         // Sigue siendo la sesión actual → se murió sola (capacidad, timeout,
         // cierre del upstream) y no por stopLucy. Reintentar con backoff.
         if (this.lucySession === session) {
@@ -480,6 +534,7 @@ export class BackendManager {
       },
     });
     this.lucySession = session;
+    this.openLucyClock();
     session.start(this.prompt);
   }
 
@@ -508,6 +563,7 @@ export class BackendManager {
     const session = this.lucySession;
     this.lucySession = null;
     session?.dispose();
+    this.closeLucyClock();
     this.lucyLive = false;
     if (this.lucyVideo) this.lucyVideo.srcObject = null;
   }
@@ -530,6 +586,7 @@ export class BackendManager {
     this.kleinCanvas ??= document.createElement("canvas");
     this.kleinCanvas.width = KLEIN_FRAME_SIZE;
     this.kleinCanvas.height = KLEIN_FRAME_SIZE;
+    this.openKleinClock();
     this.kleinTimer = setInterval(() => this.sendKleinFrame(), KLEIN_SEND_INTERVAL_MS);
   }
 
@@ -588,6 +645,7 @@ export class BackendManager {
     clearInterval(this.kleinTimer);
     this.kleinTimer = null;
     this.kleinPaused = false;
+    this.closeKleinClock();
     this.kleinSession?.dispose();
     this.kleinSession = null;
     this.kleinBitmap?.close?.();

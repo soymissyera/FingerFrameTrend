@@ -370,7 +370,8 @@ const SENAS_POLLITO = [
   "red wavy hair",
   "cartoon",
   "chick",
-  "cream",
+  // El fondo de la marca: rosa bubblegum lleno de pollitos.
+  "bubblegum pink",
   // El encargo que evita que el modelo la disfrace o le cambie la cara.
   "exactly as they are",
 ];

@@ -94,13 +94,14 @@ export const STYLES = [
       "Turn this into a hand-drawn cartoon version of the same person: keep " +
       "her face, her long red wavy hair, her clothes and her pose exactly as " +
       "they are, only redrawn. Bold dark brown outlines, flat cel-shaded " +
-      "colors, big expressive brown eyes with long lashes, soft pink blush, " +
-      "warm cream background. A small round yellow baby chick with an orange " +
-      "beak stands beside her.",
+      "colors, big expressive brown eyes with long lashes, soft pink blush. " +
+      "Behind her, a bright bubblegum pink background completely filled with " +
+      "dozens of cute round butter-yellow baby chicks with thick dark brown " +
+      "outlines, closed happy curved eyes, tiny beaks and rosy cheeks.",
     // El respaldo local se tiñe de rosa con una mezcla, no con un giro de
     // tono: así sale rosa pase lo que pase delante de la cámara.
     filter: "saturate(0.3) brightness(1.2) contrast(1.05)",
-    tint: { color: "#ff2e88", mode: "color", alpha: 0.85 },
+    tint: { color: "#fb8cd4", mode: "color", alpha: 0.85 },
   },
   {
     // El mismo dibujo, pero por Lucy: video a video enganchado al movimiento.
@@ -115,10 +116,12 @@ export const STYLES = [
     prompt:
       "Change the style of the video to a hand-drawn cartoon: bold dark " +
       "brown outlines, flat cel-shaded colors, big expressive brown eyes " +
-      "with long lashes, soft pink blush and a warm cream background; keep " +
-      "the person's face, her long red wavy hair, her clothes and her " +
-      "movements exactly as they are, only redrawn. A small round yellow " +
-      "baby chick with an orange beak stands beside her.",
+      "with long lashes, soft pink blush; keep the person's face, her long " +
+      "red wavy hair, her clothes and her movements exactly as they are, " +
+      "only redrawn. Replace the background with a bright bubblegum pink " +
+      "wall completely filled with dozens of cute round butter-yellow baby " +
+      "chicks with thick dark brown outlines, closed happy curved eyes, " +
+      "tiny beaks and rosy cheeks.",
     filter: "saturate(0.35) brightness(1.18) contrast(1.08)",
     tint: { color: "#ffcf3d", mode: "color", alpha: 0.7 },
   },

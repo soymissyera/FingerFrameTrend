@@ -9,7 +9,12 @@
 
 import { centroid } from "./tracking.js";
 
-export const PINK = "#ff2e88";
+// Paleta de la marca Miss Yera, del manual. El rosa y el cian son los que
+// salen en el video (contorno del marco y puntos de las esquinas), así que
+// van exactos, no "un rosa parecido".
+export const ROSA = "#fb8cd4";
+export const CIAN = "#38c6f4";
+export const PINK = ROSA;
 
 /** Dibuja una fuente en espejo llenando w x h. */
 export function drawMirrored(ctx, w, h, src) {

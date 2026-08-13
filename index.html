@@ -8,8 +8,11 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐣</text></svg>" />
   <style>
     :root {
-      --pink: #ff2e88;
-      --pink-soft: rgba(255, 46, 136, 0.16);
+      /* Paleta del manual de marca Miss Yera. */
+      --pink: #fb8cd4;
+      --cyan: #38c6f4;
+      --pink-soft: rgba(251, 140, 212, 0.18);
+      --on-pink: #35202c;
       --bg: #0a0a0c;
       --panel: rgba(22, 20, 26, 0.88);
       --line: rgba(255, 255, 255, 0.12);
@@ -33,7 +36,7 @@
       align-items: center;
       justify-content: center;
       background:
-        radial-gradient(1100px 620px at 50% 12%, rgba(255, 46, 136, 0.09), transparent 70%),
+        radial-gradient(1100px 620px at 50% 12%, rgba(251, 140, 212, 0.10), transparent 70%),
         var(--bg);
     }
     canvas { max-width: 100%; max-height: 100%; border-radius: 14px; }
@@ -146,7 +149,7 @@
       cursor: pointer;
       transition: background 0.15s, border-color 0.15s;
     }
-    #key-btn:hover { background: var(--pink-soft); border-color: rgba(255, 46, 136, 0.4); }
+    #key-btn:hover { background: var(--pink-soft); border-color: rgba(251, 140, 212, 0.45); }
 
     #key-panel {
       position: fixed;
@@ -197,7 +200,7 @@
       flex: 1; appearance: none; border: none; border-radius: 10px;
       padding: 9px 0; font-size: 13px; font-weight: 700; cursor: pointer;
     }
-    #key-save { background: var(--pink); color: #fff; }
+    #key-save { background: var(--pink); color: var(--on-pink); }
     #key-clear { background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.82); }
     .note { font-size: 11.5px; color: rgba(255, 255, 255, 0.45); line-height: 1.5; margin-bottom: 0 !important; }
 
@@ -227,7 +230,7 @@
       white-space: nowrap;
     }
     #toolbar button:hover { background: rgba(255, 255, 255, 0.08); }
-    #toolbar button.active { background: var(--pink); color: #fff; }
+    #toolbar button.active { background: var(--pink); color: var(--on-pink); }
     #toolbar button .key { opacity: 0.55; font-weight: 400; margin-right: 6px; font-size: 11px; }
     #toolbar button .badge {
       opacity: 0.5; font-weight: 700; margin-left: 7px;
@@ -245,7 +248,7 @@
       transform: translate(-50%, -50%);
       width: min(100vw, calc(100vh * 9 / 16));
       height: min(100vh, calc(100vw * 16 / 9));
-      background: linear-gradient(165deg, #ff2e88 0%, #ff6fae 52%, #ffd9ea 100%);
+      background: linear-gradient(170deg, #fb8cd4 0%, #ff9ede 52%, #ffd9f0 100%);
       overflow: hidden;
     }
     body.vertical #stage { --zoom: 1; }

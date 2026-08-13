@@ -10,9 +10,12 @@ const KEY_STORAGE = "fal-key";
 const CUSTOM_PROMPT_STORAGE = "fal-custom-prompt";
 const CUSTOM_BACKEND_STORAGE = "fal-custom-backend";
 const STYLE_STORAGE = "fft-style";
+const ECONOMY_STORAGE = "fal-economy";
 
 export function loadSettings() {
   return {
+    // El ahorro viene puesto salvo que se haya apagado a propósito.
+    economy: localStorage.getItem(ECONOMY_STORAGE) !== "0",
     apiKey:
       localStorage.getItem(KEY_STORAGE) || sessionStorage.getItem(KEY_STORAGE) || "",
     remember: !!localStorage.getItem(KEY_STORAGE),
@@ -39,6 +42,10 @@ export function persistStyle(id) {
   localStorage.setItem(STYLE_STORAGE, id);
 }
 
+export function persistEconomy(on) {
+  localStorage.setItem(ECONOMY_STORAGE, on ? "1" : "0");
+}
+
 /**
  * Cablea toda la interfaz y devuelve los métodos que necesita el loop.
  *
@@ -48,7 +55,7 @@ export function persistStyle(id) {
  * @param {string}            opts.styleId       estilo inicial
  * @param {object}            opts.settings      ajustes iniciales
  */
-export function createUI({ onStyle, onSettings, styleId, settings }) {
+export function createUI({ onStyle, onSettings, onEconomy, styleId, settings }) {
   const el = (id) => document.getElementById(id);
   const toolbar = el("toolbar");
   const panel = el("key-panel");
@@ -106,6 +113,14 @@ export function createUI({ onStyle, onSettings, styleId, settings }) {
   remember.checked = settings.remember;
   customPrompt.value = settings.customPrompt;
   backendRadios.forEach((r) => (r.checked = r.value === settings.customBackend));
+
+  // El ahorro se aplica al instante, sin esperar a guardar: es dinero.
+  const economy = el("economy");
+  economy.checked = settings.economy;
+  economy.addEventListener("change", () => {
+    persistEconomy(economy.checked);
+    onEconomy(economy.checked);
+  });
 
   el("key-btn").addEventListener("click", () => panel.classList.toggle("hidden"));
   el("key-close").addEventListener("click", () => panel.classList.add("hidden"));

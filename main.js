@@ -46,6 +46,7 @@ const backends = new BackendManager({
   captureSource: video,
   onStatus: (state, text) => ui.setStatus(state, text),
   onMetrics: (m) => (modelMetrics = m),
+  economy: settings.economy,
 });
 backends.setKey(settings.apiKey);
 
@@ -55,6 +56,10 @@ const ui = createUI({
   onStyle: (id) => {
     styleId = id;
     syncBackend();
+  },
+  onEconomy: (on) => {
+    settings.economy = on;
+    backends.setEconomy(on);
   },
   onSettings: (next) => {
     settings.apiKey = next.apiKey;
@@ -147,6 +152,9 @@ function loop() {
     active: tracker.active,
   });
   tracker.update(target, w);
+  // El backend necesita saber si de verdad hay marco: sin gesto, la ventana
+  // no enseña nada del modelo, así que generar sería tirar el dinero.
+  backends.setDemand(tracker.visible);
 
   if (tracker.visible) {
     drawWindow(tracker.corners, w, h);

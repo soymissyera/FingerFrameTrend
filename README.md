@@ -79,9 +79,22 @@ pégala en el panel de la llave, arriba a la derecha.
   modelo. Las carpetas de capturas están en `.gitignore`.
 
 **Costos.** Lucy se cobra por tiempo de sesión conectada y klein por cuadro
-generado. La app nunca deja una sesión de Lucy abierta de fondo: al cambiar a
-un estilo klein o cerrar la pestaña, se desconecta. Sin clave, todos los
-estilos caen a un filtro local gratuito.
+generado, a 8 cuadros por segundo. La app nunca deja una sesión de Lucy
+abierta de fondo: al cambiar a un estilo klein o cerrar la pestaña, se
+desconecta. Sin clave, todos los estilos caen a un filtro local gratuito.
+
+**Modo ahorro** (activado por defecto, se apaga en el panel de la llave). La
+ventana solo enseña el mundo IA cuando tienes el marco hecho con los dedos,
+así que generar sin gesto es tirar el dinero. Con el ahorro puesto:
+
+- **Klein** deja de mandar cuadros al soltar el marco, con una cola de 1,5 s
+  para que rehacerlo se sienta instantáneo y un hueco de tracking no provoque
+  parpadeo. Se conserva el último cuadro recibido, así que al volver a
+  encuadrar la ventana no salta al filtro local.
+- **Lucy** aguanta un minuto sin gesto antes de cortar, porque reconectar por
+  WebRTC cuesta varios segundos; pasado ese minuto se desconecta y se reanuda
+  sola en cuanto vuelves a hacer el marco. Eso es lo que evita que una pestaña
+  olvidada siga facturando.
 
 ## Cómo correrlo en tu máquina
 

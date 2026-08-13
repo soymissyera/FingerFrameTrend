@@ -41,6 +41,23 @@ const LUCY_CONNECT_TIMEOUT_MS = 20000;
 const LUCY_RETRY_START_MS = 5000;
 const LUCY_RETRY_MAX_MS = 30000;
 
+// Modo ahorro. La ventana solo enseña el mundo IA cuando el marco está hecho,
+// así que todo lo que se genera sin gesto es plata tirada.
+//
+// Los dos backends se pausan distinto porque se cobran distinto:
+//  - klein va por cuadro, y reanudar cuesta un cuadro: se pausa enseguida,
+//    con una cola corta para que rehacer el marco se sienta instantáneo.
+//  - Lucy va por tiempo conectado, pero reconectar cuesta varios segundos de
+//    WebRTC: se aguanta un minuto sin gesto antes de cortar, que es lo que
+//    hace falta para no cobrar una pestaña olvidada.
+export const KLEIN_IDLE_TAIL_MS = 1500;
+export const LUCY_IDLE_TAIL_MS = 60000;
+
+/** ¿Hay que seguir generando? Puro, para poder probarlo. */
+export function demandActive(gestureActive, lastActiveAt, now, tailMs) {
+  return gestureActive || now - lastActiveAt < tailMs;
+}
+
 // El cliente oficial se carga a demanda: así el modo demo y el filtro local
 // funcionan aunque el CDN de fal no cargue.
 let falPromise = null;
@@ -270,11 +287,27 @@ export class KleinSession {
  * o al cerrar la pestaña, se desconecta.
  */
 export class BackendManager {
-  constructor({ lucyVideo, captureSource, onStatus = () => {}, onMetrics = () => {} }) {
+  constructor({
+    lucyVideo,
+    captureSource,
+    onStatus = () => {},
+    onMetrics = () => {},
+    economy = true,
+    clock = () => performance.now(),
+  }) {
     this.lucyVideo = lucyVideo;
     this.captureSource = captureSource;
     this.onStatus = onStatus;
     this.onMetrics = onMetrics;
+    /** Modo ahorro: pausar la generación cuando no hay marco. */
+    this.economy = economy;
+    this.clock = clock;
+
+    /** ¿Hay marco hecho ahora mismo? Lo actualiza el loop cada cuadro. */
+    this.gestureActive = false;
+    this.lastActiveAt = -Infinity;
+    this.kleinPaused = false;
+    this.lucyPausedByIdle = false;
 
     this.apiKey = "";
     this.cameraStream = null;
@@ -297,6 +330,62 @@ export class BackendManager {
 
   setKey(key) {
     this.apiKey = (key || "").trim();
+  }
+
+  /**
+   * Lo llama el loop en cada cuadro con el estado real del gesto. Es el único
+   * sitio donde se decide pausar o reanudar la generación.
+   */
+  setDemand(gestureActive) {
+    const now = this.clock();
+    this.gestureActive = gestureActive;
+    if (gestureActive) this.lastActiveAt = now;
+    if (!this.economy || !this.apiKey) return;
+
+    if (this.backend === "klein" && this.kleinSession) {
+      const wanted = demandActive(gestureActive, this.lastActiveAt, now, KLEIN_IDLE_TAIL_MS);
+      if (!wanted && !this.kleinPaused) {
+        this.kleinPaused = true;
+        this.onStatus("paused", "KLEIN EN PAUSA · AHORRO");
+      } else if (wanted && this.kleinPaused) {
+        this.kleinPaused = false;
+        this.onStatus("live", "KLEIN · GENERANDO…");
+      }
+      return;
+    }
+
+    if (this.backend === "lucy") {
+      const wanted = demandActive(gestureActive, this.lastActiveAt, now, LUCY_IDLE_TAIL_MS);
+      if (!wanted && this.lucySession) {
+        this.stopLucy();
+        this.lucyPausedByIdle = true;
+        this.onStatus("paused", "LUCY EN PAUSA · AHORRO");
+      } else if (wanted && this.lucyPausedByIdle) {
+        this.lucyPausedByIdle = false;
+        void this.resumeLucy();
+      }
+    }
+  }
+
+  /** Enciende o apaga el ahorro en caliente, sin perder la sesión. */
+  setEconomy(on) {
+    this.economy = !!on;
+    if (this.economy) return;
+    // Al apagarlo, deshacer cualquier pausa que siguiera puesta.
+    this.kleinPaused = false;
+    if (this.lucyPausedByIdle) {
+      this.lucyPausedByIdle = false;
+      void this.resumeLucy();
+    }
+  }
+
+  async resumeLucy() {
+    if (this.backend !== "lucy" || !this.apiKey || this.lucySession) return;
+    try {
+      this.startLucy(await loadFal());
+    } catch (err) {
+      this.onStatus("error", `No se pudo reanudar Lucy: ${err?.message || err}`);
+    }
   }
 
   setCamera(stream) {
@@ -344,8 +433,9 @@ export class BackendManager {
     if (backend === "lucy") {
       this.stopKlein();
       if (this.lucySession) this.lucySession.sendPrompt(prompt);
-      else this.startLucy(fal);
+      else if (!this.lucyPausedByIdle) this.startLucy(fal);
     } else {
+      this.lucyPausedByIdle = false;
       this.stopLucy();
       if (!this.kleinSession) this.startKlein(fal);
       else if (backendChanged) this.onStatus("connecting", "KLEIN · CONECTANDO…");
@@ -353,6 +443,7 @@ export class BackendManager {
   }
 
   stopAll() {
+    this.lucyPausedByIdle = false;
     this.stopLucy();
     this.stopKlein();
     this.onStatus("idle", "");
@@ -474,6 +565,9 @@ export class BackendManager {
   sendKleinFrame() {
     const src = this.captureSource;
     if (!this.kleinSession || !src || src.readyState < 2) return;
+    // Modo ahorro: sin marco no se genera nada. Se conserva el último cuadro
+    // recibido, así que al rehacer el gesto la ventana no parpadea a filtro.
+    if (this.economy && this.kleinPaused) return;
     const c = this.kleinCanvas.getContext("2d");
     // Se captura en espejo, igual que el canvas en pantalla, para que el
     // cuadro que vuelve se dibuje directo sin otro volteo.
@@ -493,6 +587,7 @@ export class BackendManager {
   stopKlein() {
     clearInterval(this.kleinTimer);
     this.kleinTimer = null;
+    this.kleinPaused = false;
     this.kleinSession?.dispose();
     this.kleinSession = null;
     this.kleinBitmap?.close?.();

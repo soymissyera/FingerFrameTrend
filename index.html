@@ -121,6 +121,7 @@
     #live-pill.connecting .dot { background: #ffc24b; }
     #live-pill.error .dot { background: #ff6b5e; animation: none; }
     #live-pill.local .dot { background: var(--pink); }
+    #live-pill.paused .dot { background: rgba(255,255,255,0.55); animation: none; }
     #stats {
       font-size: 11.5px;
       font-weight: 500;
@@ -281,6 +282,16 @@
     <label class="check">
       <input type="checkbox" id="key-remember" />
       Recordar en este dispositivo
+    </label>
+
+    <h3>Consumo</h3>
+    <label class="check">
+      <input type="checkbox" id="economy" checked />
+      <span>
+        <strong>Modo ahorro.</strong> Generar solo mientras tienes el marco hecho
+        con los dedos. Klein deja de mandar cuadros en cuanto lo deshaces, y la
+        sesión de Lucy se corta tras un minuto sin gesto y se reanuda sola.
+      </span>
     </label>
 
     <h3>Estilo personalizado</h3>

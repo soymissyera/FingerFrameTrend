@@ -22,6 +22,12 @@ import {
   THUMB_TIP,
 } from "../tracking.js";
 import { squashPoint, unsquashPoint, withAlpha, FpsMeter } from "../composite.js";
+import {
+  BackendManager,
+  demandActive,
+  KLEIN_IDLE_TAIL_MS,
+  LUCY_IDLE_TAIL_MS,
+} from "../backends.js";
 import { makeFakeHands } from "../demo.js";
 import { STYLES, findStyle, backendFor, promptFor, DEFAULT_STYLE_ID } from "../styles.js";
 
@@ -378,6 +384,114 @@ test("el estilo personalizado hereda backend y prompt del panel", () => {
 
 test("findStyle no explota con un identificador desconocido", () => {
   assert.equal(findStyle("no-existe").id, STYLES[0].id);
+});
+
+// ------------------------------------------------------------- modo ahorro
+group("Modo ahorro (no generar sin marco)");
+
+/** Manager con reloj falso y sesiones de mentira: no toca red ni DOM. */
+function fakeManager({ backend, economy = true } = {}) {
+  let t = 0;
+  const status = [];
+  const m = new BackendManager({
+    lucyVideo: {},
+    captureSource: null,
+    onStatus: (state, text) => status.push([state, text]),
+    economy,
+    clock: () => t,
+  });
+  m.apiKey = "clave-de-mentira";
+  m.backend = backend;
+  if (backend === "klein") m.kleinSession = { send() {} };
+  if (backend === "lucy") m.lucySession = { dispose() {} };
+  m.resumed = 0;
+  m.resumeLucy = async () => {
+    m.resumed++;
+    m.lucySession = { dispose() {} };
+  };
+  return { m, status, advance: (ms) => (t += ms) };
+}
+
+test("demandActive sostiene la generación durante la cola y luego la suelta", () => {
+  assert.equal(demandActive(true, 0, 99999, 1500), true, "con gesto, siempre");
+  assert.equal(demandActive(false, 1000, 2000, 1500), true, "dentro de la cola");
+  assert.equal(demandActive(false, 1000, 3000, 1500), false, "pasada la cola");
+});
+
+test("klein se pausa al soltar el marco y reanuda al rehacerlo", () => {
+  const { m, advance } = fakeManager({ backend: "klein" });
+  m.setDemand(true);
+  assert.equal(m.kleinPaused, false);
+
+  m.setDemand(false);
+  assert.equal(m.kleinPaused, false, "una cola corta evita parpadeos por dropout");
+  advance(KLEIN_IDLE_TAIL_MS + 1);
+  m.setDemand(false);
+  assert.equal(m.kleinPaused, true, "sin marco de verdad, se pausa");
+
+  m.setDemand(true);
+  assert.equal(m.kleinPaused, false, "y reanuda en el mismo cuadro");
+});
+
+test("en pausa no se manda ni un cuadro, y el último se conserva", () => {
+  const { m } = fakeManager({ backend: "klein" });
+  let sent = 0;
+  m.kleinSession = { send: () => sent++ };
+  m.captureSource = { readyState: 4 };
+  m.kleinCanvas = null; // si intentara capturar, reventaría: no debe intentarlo
+  m.kleinPaused = true;
+  m.sendKleinFrame();
+  assert.equal(sent, 0, "pausado no manda nada");
+  m.kleinBitmap = "cuadro-previo";
+  m.sendKleinFrame();
+  assert.equal(m.kleinBitmap, "cuadro-previo", "y no descarta el último cuadro");
+});
+
+test("Lucy aguanta un minuto sin gesto antes de cortar, y vuelve sola", () => {
+  const { m, advance, status } = fakeManager({ backend: "lucy" });
+  m.setDemand(true);
+  advance(30000);
+  m.setDemand(false);
+  assert.ok(m.lucySession, "a los 30 s sigue conectada: reconectar cuesta caro");
+
+  advance(LUCY_IDLE_TAIL_MS);
+  m.setDemand(false);
+  assert.equal(m.lucySession, null, "pasado el minuto, corta");
+  assert.equal(m.lucyPausedByIdle, true);
+  assert.ok(status.some(([s]) => s === "paused"));
+
+  m.setDemand(true);
+  assert.equal(m.resumed, 1, "y se reanuda al volver a hacer el marco");
+  assert.equal(m.lucyPausedByIdle, false);
+});
+
+test("con el ahorro apagado no se pausa nunca", () => {
+  const { m, advance } = fakeManager({ backend: "klein", economy: false });
+  m.setDemand(true);
+  advance(60 * 60 * 1000);
+  m.setDemand(false);
+  assert.equal(m.kleinPaused, false);
+});
+
+test("apagar el ahorro en caliente deshace la pausa y reconecta Lucy", () => {
+  const { m, advance } = fakeManager({ backend: "lucy" });
+  m.setDemand(true);
+  advance(LUCY_IDLE_TAIL_MS + 1);
+  m.setDemand(false);
+  assert.equal(m.lucyPausedByIdle, true);
+
+  m.setEconomy(false);
+  assert.equal(m.lucyPausedByIdle, false);
+  assert.equal(m.resumed, 1);
+});
+
+test("sin clave el ahorro no toca nada", () => {
+  const { m, advance } = fakeManager({ backend: "klein" });
+  m.apiKey = "";
+  m.setDemand(true);
+  advance(9999);
+  m.setDemand(false);
+  assert.equal(m.kleinPaused, false);
 });
 
 // -------------------------------------------------------------- indicadores

@@ -1,0 +1,149 @@
+# Finger Frame IA en tiempo real · Miss Yera
+
+Haz el gesto de marco de director con las dos manos frente a la webcam y el
+área que queda dentro de tus dedos se convierte en una ventana a un mundo
+generado por IA en tiempo real. Las manos y el fondo son reales; solo lo que
+se ve dentro del marco es el mundo IA.
+
+Todo corre en el navegador desde una página estática: sin build, sin backend,
+sin frameworks. La clave de fal la pones tú y se queda en tu navegador.
+
+## Cómo se prueba
+
+En este orden, que es el que va de gratis y sin permisos a la experiencia
+completa:
+
+1. **Modo demo, sin cámara y sin clave.** Abre la página con `?demo` al final
+   de la URL. Verás un feed sintético con unas manos falsas que se mueven
+   solas: sirve para comprobar que el tracking y el recorte funcionan sin
+   pedir permisos ni gastar un centavo. Nunca llama a la API.
+2. **Cámara real, sin clave.** Abre la página normal y da permiso de cámara.
+   Haz el marco con los dedos: dentro verás un filtro local de color, distinto
+   por cada estilo. Sigue sin llamar a la API.
+3. **Con clave de fal.** Botón de la llave, arriba a la derecha. A partir de
+   ahí la ventana muestra el mundo IA de verdad.
+
+La cámara necesita HTTPS o localhost, así que en GitHub Pages funciona.
+
+## Los dos modelos
+
+Cada estilo apunta a uno de los dos modelos realtime de fal, y se puede
+cambiar en vivo.
+
+- **[Decart Lucy 2.5](https://fal.ai/models/decart/lucy-2-5/realtime)** es
+  video a video de verdad. Todo el encuadre se reestiliza como flujo continuo
+  y queda enganchado a tu movimiento: parpadeas y la ventana parpadea. Va
+  mejor para transformaciones realistas de ti misma (anime, cyberpunk,
+  personaje 3D). El medio viaja punto a punto por WebRTC, mientras que el
+  WebSocket de fal lleva la señalización y los cambios de prompt en vivo.
+- **[FLUX.2 [klein]](https://fal.ai/models/fal-ai/flux-2-klein-realtime/realtime)**
+  hace edición de imagen cuadro por cuadro. Cada cuadro de la cámara sube como
+  JPEG y vuelve reimaginado unos pasos de difusión después. La geometría es
+  más suelta y soñadora, que es justo lo que le va a los mundos creativos:
+  óleo vivo, dreamworld, tinta y Mundo Pollito.
+
+El tracking, la máscara y el contorno corren en local a la velocidad de la
+pantalla, así que el marco sigue tus dedos con latencia cero aunque el modelo
+vaya más lento. Los modelos ni siquiera saben que existen los dedos: reciben
+el encuadre completo y el recorte es 100% local.
+
+## Estilos
+
+| Tecla | Estilo | Modelo |
+|---|---|---|
+| 1 | Anime | Lucy 2.5 |
+| 2 | Cyberpunk | Lucy 2.5 |
+| 3 | Personaje 3D | Lucy 2.5 |
+| 4 | Óleo vivo | FLUX.2 klein |
+| 5 | Dreamworld | FLUX.2 klein |
+| 6 | Boceto a tinta | FLUX.2 klein |
+| 7 | **Mundo Pollito** | FLUX.2 klein |
+| 8 | Personalizado | el que elijas |
+
+El **Mundo Pollito** es el estilo propio de la marca: mundo ilustrado tierno
+en rosa y blanco, pollitos amarillos, nubes esponjosas, estética kawaii
+limpia. El estilo Personalizado toma el prompt libre y el modelo que elijas en
+el panel de la llave.
+
+## Tu clave de fal
+
+Saca una clave en [fal.ai/dashboard/keys](https://fal.ai/dashboard/keys) y
+pégala en el panel de la llave, arriba a la derecha.
+
+- La clave se queda en tu navegador. Solo se guarda en `localStorage` si
+  marcas "recordar"; si no, vive en `sessionStorage` y muere al cerrar la
+  pestaña. Nunca está en el código.
+- Se usa únicamente para acuñar tokens de sesión de corta duración con el
+  cliente oficial [`@fal-ai/client`](https://github.com/fal-ai/fal-js).
+- Tu video no se guarda ni se sube a ningún sitio fuera de la llamada al
+  modelo. Las carpetas de capturas están en `.gitignore`.
+
+**Costos.** Lucy se cobra por tiempo de sesión conectada y klein por cuadro
+generado. La app nunca deja una sesión de Lucy abierta de fondo: al cambiar a
+un estilo klein o cerrar la pestaña, se desconecta. Sin clave, todos los
+estilos caen a un filtro local gratuito.
+
+## Cómo correrlo en tu máquina
+
+Cualquier servidor estático sirve, no hay nada que compilar:
+
+```bash
+python3 -m http.server 8125
+```
+
+Y abre <http://localhost:8125>. Para el modo demo,
+<http://localhost:8125/?demo>.
+
+## Cómo está hecho
+
+```
+index.html      página única, interfaz mínima
+main.js         loop de render y orquestación de las tres capas
+tracking.js     geometría del marco y pipeline de robustez (lógica pura)
+backends.js     clientes de Lucy (WebRTC) y klein (cuadros), tokens de fal
+composite.js    canvas, recorte, contorno, indicadores
+styles.js       estilos, prompts y filtros locales de respaldo
+hands.js        carga de MediaPipe Hand Landmarker
+demo.js         feed sintético y manos falsas del modo ?demo
+ui.js           selector de estilos, panel de la clave, indicadores
+tests/          pruebas de la lógica pura en Node
+```
+
+Tres capas independientes sincronizadas en un solo `requestAnimationFrame`:
+
+1. **Tracking.** MediaPipe Hand Landmarker encuentra las dos manos por cuadro
+   y el cuadrilátero pasa por un pipeline de robustez: orden anatómico de las
+   esquinas, gates de separación y de área con histéresis, rechazo de
+   teletransporte, suavizado adaptativo por velocidad, sostenimiento de
+   dropout y fundido de presencia.
+2. **Generación.** El backend elegido reestiliza el encuadre completo. Los
+   estilos de Lucy abren una sesión WebRTC; cambiar de estilo es un mensaje
+   por el socket de señalización, no una reconexión, y si el upstream está a
+   capacidad se reintenta con backoff exponencial. Los estilos de klein
+   mandan un JPEG espejado de 768x768 cada 125 ms con
+   `output_feedback_strength: 0.9`, que siembra cada cuadro con parte del
+   anterior para tener coherencia temporal, más una semilla fija. El cuadro
+   16:9 se aplasta a cuadrado en vez de recortarse, así la distorsión se
+   cancela al mostrarlo y el marco puede estar en cualquier parte del encuadre.
+3. **Compositing.** La salida IA se dibuja alineada a pantalla y se revela
+   solo a través del cuadrilátero con un `clip()` del canvas, con contorno
+   punteado animado y puntos pulsantes en las esquinas.
+
+## Pruebas
+
+La lógica pura (orden de esquinas, histéresis, rechazo de saltos, suavizado,
+fundido, mapeo 16:9 a cuadrado, estilos) se prueba en Node, sin dependencias:
+
+```bash
+node tests/run-tests.mjs
+```
+
+Lo visual se prueba a mano en el navegador, empezando por `?demo`.
+
+## Referencias
+
+Reconstruido a partir de
+[blendi-remade/finger-frame-effect-fal](https://github.com/blendi-remade/finger-frame-effect-fal),
+de la familia original de
+[sophiamyang](https://github.com/sophiamyang/finger-frame-effect):
+`finger-frame-effect`, `finger-frame-effect-ai` y `finger-frame-effect-lucy`.

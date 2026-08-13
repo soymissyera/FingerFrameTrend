@@ -91,38 +91,33 @@ export const STYLES = [
     label: "Mundo Pollito",
     backend: "klein",
     prompt:
-      "Turn this into a glamorous cartoon illustration of the same woman, " +
-      "redrawn and idealized but still recognizable: bold dark brown " +
-      "outlines, flat cel shading, smooth flawless skin, big brown eyes with " +
-      "long lashes, defined eyebrows, full glossy lips, long red wavy hair " +
-      "with glossy highlights, flattering curvy figure. Background: bright " +
-      "bubblegum pink packed with round butter-yellow baby chicks with thick " +
-      "brown outlines and rosy cheeks.",
+      "Turn this into a cartoon illustration of THIS EXACT WOMAN: same face, " +
+      "same facial features, same expression, same long red wavy hair, same " +
+      "clothes, same pose. Only the drawing style changes. Bold dark brown " +
+      "outlines, flat cel shading, big brown eyes with long lashes, full " +
+      "glossy lips, smooth skin. Background: bright bubblegum pink filled " +
+      "with cute round yellow baby chicks with brown outlines and rosy cheeks.",
     // El respaldo local se tiñe de rosa con una mezcla, no con un giro de
     // tono: así sale rosa pase lo que pase delante de la cámara.
     filter: "saturate(0.3) brightness(1.2) contrast(1.05)",
     tint: { color: "#fb8cd4", mode: "color", alpha: 0.85 },
   },
   {
-    // El mismo dibujo, pero por Lucy: video a video enganchado al movimiento.
-    // Parpadeas y el dibujo parpadea. Mismas señas, fraseadas con la
-    // plantilla de Decart y con el mismo encargo de no cambiar a la persona.
-    //
-    // Ojo: Lucy se cobra por tiempo conectado, no por cuadro. Por eso el
-    // estilo por defecto sigue siendo el de klein.
-    id: "pollito-lucy",
+    // El mismo mundo en versión película animada, y también por klein: Lucy
+    // se cobra por tiempo conectado y sale carísima, así que los dos estilos
+    // de la marca van por el barato. La diferencia entre el 7 y el 8 es el
+    // acabado, plano de ilustración contra volumen de película.
+    id: "pollito-3d",
     label: "Pollito animado",
-    backend: "lucy",
+    backend: "klein",
     prompt:
-      "Change the style of the video to a glamorous cartoon illustration: " +
-      "bold dark brown outlines, flat cel shading, smooth flawless skin, big " +
-      "brown eyes with long lashes, defined eyebrows, full glossy lips, long " +
-      "red wavy hair with glossy highlights, flattering curvy figure; her " +
-      "face and her movements stay recognizable. Replace the background with " +
-      "bright bubblegum pink packed with round butter-yellow baby chicks " +
-      "with thick brown outlines and rosy cheeks.",
-    filter: "saturate(0.35) brightness(1.18) contrast(1.08)",
-    tint: { color: "#ffcf3d", mode: "color", alpha: 0.7 },
+      "Turn this into a 3D animated movie character of THIS EXACT WOMAN: " +
+      "same face, same facial features, same expression, same long red wavy " +
+      "hair, same clothes. Soft rounded 3D shading, big glossy eyes, smooth " +
+      "skin, warm cinematic light. Background: bright bubblegum pink with " +
+      "fluffy round yellow baby chicks bouncing around her.",
+    filter: "saturate(0.45) brightness(1.16) contrast(1.06)",
+    tint: { color: "#ffcf3d", mode: "color", alpha: 0.55 },
   },
   {
     // Estilo libre: prompt y backend se eligen en el panel de la clave.

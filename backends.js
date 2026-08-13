@@ -28,6 +28,8 @@ export const KLEIN_ENDPOINT = "fal-ai/flux-2-klein-realtime/realtime";
 export const KLEIN_FRAME_SIZE = 768;
 export const KLEIN_JPEG_QUALITY = 0.5;
 export const KLEIN_SEND_INTERVAL_MS = 125;
+export const KLEIN_STEPS_MIN = 1;
+export const KLEIN_STEPS_MAX = 6;
 export const KLEIN_PARAMS = {
   image_size: "square",
   num_inference_steps: 3,
@@ -343,6 +345,9 @@ export class BackendManager {
 
     // Contador de gasto de la sesión. Se cuenta el tiempo que cada backend
     // está de verdad trabajando; el modo ahorro se nota aquí directamente.
+    // Pasos de difusión de klein, ajustables en vivo: menos pasos = el
+    // resultado se parece más a la imagen de entrada, o sea a ella.
+    this.kleinSteps = KLEIN_PARAMS.num_inference_steps;
     this.lucySeconds = 0;
     this.lucySince = null;
     this.kleinSeconds = 0;
@@ -381,6 +386,12 @@ export class BackendManager {
 
   setKey(key) {
     this.apiKey = (key || "").trim();
+  }
+
+  /** Pasos de difusión de klein, entre 1 y 6. Devuelve el valor aplicado. */
+  setSteps(n) {
+    this.kleinSteps = Math.max(KLEIN_STEPS_MIN, Math.min(KLEIN_STEPS_MAX, Math.round(n)));
+    return this.kleinSteps;
   }
 
   /**
@@ -638,6 +649,7 @@ export class BackendManager {
       prompt: this.prompt,
       image_url: dataUri,
       ...KLEIN_PARAMS,
+      num_inference_steps: this.kleinSteps,
     });
   }
 

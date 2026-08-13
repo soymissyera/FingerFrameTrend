@@ -58,11 +58,12 @@ el encuadre completo y el recorte es 100% local.
 | 5 | Dreamworld | FLUX.2 klein |
 | 6 | Boceto a tinta | FLUX.2 klein |
 | 7 | **Mundo Pollito** | FLUX.2 klein |
-| 8 | **Pollito animado** | Lucy 2.5 |
+| 8 | **Pollito animado** | FLUX.2 klein |
 | 9 | Personalizado | el que elijas |
 | O | Ocultar o mostrar la interfaz (modo grabación) | — |
 | V | Formato vertical 9:16 | — |
 | + − | Zoom dentro del marco vertical | — |
+| , . | Cuánto te transforma el modelo, de 1 a 6 | — |
 
 El **Mundo Pollito** es el estilo propio de la marca, y está en los dos
 modelos con el mismo mundo descrito igual: contorno marrón grueso, color plano
@@ -73,11 +74,17 @@ oscuro.
 
 La diferencia está en el modelo, y conviene probar los dos:
 
-- **Tecla 7, por klein.** Reimagina cada cuadro por separado, así que el mundo
-  respira y cambia. Se cobra por cuadro. Es el que abre por defecto.
-- **Tecla 8, por Lucy.** Video a video enganchado a tu movimiento: parpadeas y
-  el personaje parpadea. Más estable y más creíble como personaje, pero se
-  cobra por tiempo conectado.
+- **Tecla 7:** ilustración plana, contorno marrón grueso y color de cómic.
+- **Tecla 8:** el mismo mundo con acabado de película animada, con volumen y
+  luz suave.
+
+Los dos van por klein a propósito. Lucy cuesta veinte veces más y para los
+estilos de la marca no compensa; los únicos que quedan en Lucy son el anime,
+el cyberpunk y el personaje 3D.
+
+Si el resultado no se te parece lo suficiente, baja los pasos de difusión con
+la tecla **,**: cuantos menos pasos, más se respeta la imagen de tu cámara y
+más te pareces. Con **.** subes hacia más estilo y menos parecido.
 
 El estilo Personalizado toma el prompt libre y el modelo que elijas en el panel
 de la llave.

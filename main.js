@@ -49,6 +49,7 @@ const backends = new BackendManager({
   economy: settings.economy,
 });
 backends.setKey(settings.apiKey);
+backends.setSteps(Number(localStorage.getItem("fal-klein-steps")) || backends.kleinSteps);
 
 const ui = createUI({
   styleId,
@@ -56,6 +57,15 @@ const ui = createUI({
   onStyle: (id) => {
     styleId = id;
     syncBackend();
+  },
+  onSteps: (delta) => {
+    // Menos pasos, más se parece a la entrada; más pasos, más estilo.
+    const n = backends.setSteps(backends.kleinSteps + delta);
+    localStorage.setItem("fal-klein-steps", String(n));
+    ui.toast(
+      `Transformación ${n} de 6 · ${n <= 2 ? "más parecida a ti" : n >= 5 ? "mucho más estilo" : "equilibrado"}`,
+      1800
+    );
   },
   onEconomy: (on) => {
     settings.economy = on;

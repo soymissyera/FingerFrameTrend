@@ -361,40 +361,40 @@ test("cada estilo con backend trae prompt del fraseo correcto", () => {
   }
 });
 
-// Las señas de la marca, tal cual las referencias: contorno marrón grueso,
-// color plano, ojos grandes, fondo crema, el pollito como personaje aparte
-// y, sobre todo, la persona intacta. Los dos estilos piden lo mismo.
+// Lo que comparten los dos estilos de la marca: es ELLA, no una chica
+// cualquiera, sobre el rosa de la marca y con pollitos alrededor.
 const SENAS_POLLITO = [
-  "brown outline",
-  "flat cel",
+  "this exact woman",
+  "same face",
   "red wavy hair",
-  "cartoon",
-  "chick",
-  // El fondo de la marca: rosa bubblegum lleno de pollitos.
   "bubblegum pink",
-  // Idealizada como en sus ilustraciones, pero sin dejar de ser ella.
-  "recognizable",
-  "long lashes",
+  "chick",
 ];
 
-test("el Mundo Pollito existe, es de la marca y va por klein", () => {
-  const pollito = findStyle("pollito");
-  assert.equal(pollito.backend, "klein");
-  assert.equal(DEFAULT_STYLE_ID, "pollito", "el de klein es el que abre, se cobra por cuadro");
-  for (const word of SENAS_POLLITO) {
-    assert.ok(pollito.prompt.toLowerCase().includes(word), `falta «${word}» en el prompt`);
+test("los dos estilos de la marca son de klein, que es el barato", () => {
+  for (const id of ["pollito", "pollito-3d"]) {
+    assert.equal(findStyle(id).backend, "klein", `${id} no puede ir por Lucy`);
+  }
+  assert.equal(DEFAULT_STYLE_ID, "pollito");
+  // Ningún estilo de la marca debe colarse a Lucy, que cuesta 20 veces más.
+  const caros = STYLES.filter((s) => s.backend === "lucy").map((s) => s.id);
+  assert.deepEqual(caros, ["anime", "cyberpunk", "personaje3d"]);
+});
+
+test("los dos piden que siga siendo ella, con su mundo detrás", () => {
+  for (const id of ["pollito", "pollito-3d"]) {
+    const p = findStyle(id).prompt.toLowerCase();
+    for (const word of SENAS_POLLITO) {
+      assert.ok(p.includes(word), `a ${id} le falta «${word}»`);
+    }
   }
 });
 
-test("el Pollito animado es el mismo mundo por Lucy", () => {
-  const lucy = findStyle("pollito-lucy");
-  assert.equal(lucy.backend, "lucy");
-  for (const word of SENAS_POLLITO) {
-    assert.ok(lucy.prompt.toLowerCase().includes(word), `falta «${word}» en el prompt de Lucy`);
-  }
-  // Mismo mundo, distinta plantilla: la de Decart para video.
-  assert.ok(lucy.prompt.startsWith("Change the style of the video to"));
-  assert.ok(findStyle("pollito").prompt.startsWith("Turn this into"));
+test("el 7 y el 8 se diferencian en el acabado, plano contra volumen", () => {
+  const plano = findStyle("pollito").prompt.toLowerCase();
+  const volumen = findStyle("pollito-3d").prompt.toLowerCase();
+  assert.ok(plano.includes("flat cel") && plano.includes("brown outline"));
+  assert.ok(volumen.includes("3d") && !volumen.includes("flat cel"));
 });
 
 test("el estilo personalizado hereda backend y prompt del panel", () => {

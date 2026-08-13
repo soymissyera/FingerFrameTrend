@@ -55,7 +55,7 @@ export function persistEconomy(on) {
  * @param {string}            opts.styleId       estilo inicial
  * @param {object}            opts.settings      ajustes iniciales
  */
-export function createUI({ onStyle, onSettings, onEconomy, styleId, settings }) {
+export function createUI({ onStyle, onSettings, onEconomy, onSteps, styleId, settings }) {
   const el = (id) => document.getElementById(id);
   const toolbar = el("toolbar");
   const panel = el("key-panel");
@@ -110,6 +110,12 @@ export function createUI({ onStyle, onSettings, onEconomy, styleId, settings }) 
     } else if (key === "v") {
       ev.preventDefault();
       toggleVertical();
+    } else if (ev.key === "," || ev.key === "<") {
+      ev.preventDefault();
+      onSteps(-1);
+    } else if (ev.key === "." || ev.key === ">") {
+      ev.preventDefault();
+      onSteps(+1);
     } else if (ev.key === "+" || ev.key === "=") {
       ev.preventDefault();
       setZoom(zoom + 0.1);

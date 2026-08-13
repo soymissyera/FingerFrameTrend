@@ -65,14 +65,14 @@ el encuadre completo y el recorte es 100% local.
 | + − | Zoom dentro del marco vertical | — |
 | , . | Cuánto te transforma el modelo, de 1 a 6 | — |
 
-El **Mundo Pollito** es el estilo propio de la marca, y está en los dos
-modelos con el mismo mundo descrito igual: contorno marrón grueso, color plano
-de cómic, trama de medios tonos, pollitos amarillo mantequilla con mofletes
-rosas, pueblo de casas huevo con techos rosas y banderines, y la persona
-convertida en personaje con la capucha de pollito conservando el pelo rojo
-oscuro.
+El **Mundo Pollito** es el estilo propio de la marca. La regla que lo define
+es lo que NO cambia: ella sigue siendo ella, su cara, su melena roja, su ropa
+y su expresión, solo que dibujada. El prompt lo pide con mayúsculas («THIS
+EXACT WOMAN, same face, same features») porque sin esa orden el modelo se toma
+libertades y devuelve a otra persona. Detrás, el rosa bubblegum de la marca
+lleno de pollitos amarillos.
 
-La diferencia está en el modelo, y conviene probar los dos:
+Hay dos versiones, y conviene probar las dos:
 
 - **Tecla 7:** ilustración plana, contorno marrón grueso y color de cómic.
 - **Tecla 8:** el mismo mundo con acabado de película animada, con volumen y

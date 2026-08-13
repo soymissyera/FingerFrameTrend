@@ -91,13 +91,13 @@ export const STYLES = [
     label: "Mundo Pollito",
     backend: "klein",
     prompt:
-      "Turn this into a hand-drawn cartoon version of the same person: keep " +
-      "her face, her long red wavy hair, her clothes and her pose exactly as " +
-      "they are, only redrawn. Bold dark brown outlines, flat cel-shaded " +
-      "colors, big expressive brown eyes with long lashes, soft pink blush. " +
-      "Behind her, a bright bubblegum pink background completely filled with " +
-      "dozens of cute round butter-yellow baby chicks with thick dark brown " +
-      "outlines, closed happy curved eyes, tiny beaks and rosy cheeks.",
+      "Turn this into a glamorous cartoon illustration of the same woman, " +
+      "redrawn and idealized but still recognizable: bold dark brown " +
+      "outlines, flat cel shading, smooth flawless skin, big brown eyes with " +
+      "long lashes, defined eyebrows, full glossy lips, long red wavy hair " +
+      "with glossy highlights, flattering curvy figure. Background: bright " +
+      "bubblegum pink packed with round butter-yellow baby chicks with thick " +
+      "brown outlines and rosy cheeks.",
     // El respaldo local se tiñe de rosa con una mezcla, no con un giro de
     // tono: así sale rosa pase lo que pase delante de la cámara.
     filter: "saturate(0.3) brightness(1.2) contrast(1.05)",
@@ -114,14 +114,13 @@ export const STYLES = [
     label: "Pollito animado",
     backend: "lucy",
     prompt:
-      "Change the style of the video to a hand-drawn cartoon: bold dark " +
-      "brown outlines, flat cel-shaded colors, big expressive brown eyes " +
-      "with long lashes, soft pink blush; keep the person's face, her long " +
-      "red wavy hair, her clothes and her movements exactly as they are, " +
-      "only redrawn. Replace the background with a bright bubblegum pink " +
-      "wall completely filled with dozens of cute round butter-yellow baby " +
-      "chicks with thick dark brown outlines, closed happy curved eyes, " +
-      "tiny beaks and rosy cheeks.",
+      "Change the style of the video to a glamorous cartoon illustration: " +
+      "bold dark brown outlines, flat cel shading, smooth flawless skin, big " +
+      "brown eyes with long lashes, defined eyebrows, full glossy lips, long " +
+      "red wavy hair with glossy highlights, flattering curvy figure; her " +
+      "face and her movements stay recognizable. Replace the background with " +
+      "bright bubblegum pink packed with round butter-yellow baby chicks " +
+      "with thick brown outlines and rosy cheeks.",
     filter: "saturate(0.35) brightness(1.18) contrast(1.08)",
     tint: { color: "#ffcf3d", mode: "color", alpha: 0.7 },
   },

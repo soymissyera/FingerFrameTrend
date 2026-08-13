@@ -366,14 +366,15 @@ test("cada estilo con backend trae prompt del fraseo correcto", () => {
 // y, sobre todo, la persona intacta. Los dos estilos piden lo mismo.
 const SENAS_POLLITO = [
   "brown outline",
-  "cel-shaded",
+  "flat cel",
   "red wavy hair",
   "cartoon",
   "chick",
   // El fondo de la marca: rosa bubblegum lleno de pollitos.
   "bubblegum pink",
-  // El encargo que evita que el modelo la disfrace o le cambie la cara.
-  "exactly as they are",
+  // Idealizada como en sus ilustraciones, pero sin dejar de ser ella.
+  "recognizable",
+  "long lashes",
 ];
 
 test("el Mundo Pollito existe, es de la marca y va por klein", () => {

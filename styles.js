@@ -102,6 +102,28 @@ export const STYLES = [
     tint: { color: "#ff2e88", mode: "color", alpha: 0.85 },
   },
   {
+    // El mismo mundo de la marca, pero por Lucy: video a video enganchado al
+    // movimiento. Parpadeas y el personaje parpadea. Mismas señas visuales,
+    // fraseadas con la plantilla de Decart.
+    //
+    // Ojo: Lucy se cobra por tiempo conectado, no por cuadro. Por eso el
+    // estilo por defecto sigue siendo el de klein.
+    id: "pollito-lucy",
+    label: "Pollito animado",
+    backend: "lucy",
+    prompt:
+      "Change the style of the video to the Mundo Pollito cartoon world: " +
+      "bold dark brown outlines on everything, flat cel-shaded colors and " +
+      "halftone dot shading; the person becomes a cute cartoon character " +
+      "with big glossy eyes, pink blushed cheeks and dark red wavy hair, " +
+      "wearing a butter-yellow baby chick hoodie with a small orange beak " +
+      "and dot eyes on the hood; behind them a village of egg-shaped houses " +
+      "with pink domed roofs, pink and yellow triangle bunting and a bright " +
+      "blue sky with fluffy white clouds.",
+    filter: "saturate(0.35) brightness(1.18) contrast(1.08)",
+    tint: { color: "#ffcf3d", mode: "color", alpha: 0.7 },
+  },
+  {
     // Estilo libre: prompt y backend se eligen en el panel de la clave.
     id: "custom",
     label: "Personalizado",

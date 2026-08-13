@@ -58,21 +58,35 @@ el encuadre completo y el recorte es 100% local.
 | 5 | Dreamworld | FLUX.2 klein |
 | 6 | Boceto a tinta | FLUX.2 klein |
 | 7 | **Mundo Pollito** | FLUX.2 klein |
-| 8 | Personalizado | el que elijas |
+| 8 | **Pollito animado** | Lucy 2.5 |
+| 9 | Personalizado | el que elijas |
 | O | Ocultar o mostrar la interfaz (modo grabación) | — |
 | V | Formato vertical 9:16 | — |
 | + − | Zoom dentro del marco vertical | — |
 
-El **Mundo Pollito** es el estilo propio de la marca: mundo ilustrado tierno
-en rosa y blanco, pollitos amarillos, nubes esponjosas, estética kawaii
-limpia. El estilo Personalizado toma el prompt libre y el modelo que elijas en
-el panel de la llave.
+El **Mundo Pollito** es el estilo propio de la marca, y está en los dos
+modelos con el mismo mundo descrito igual: contorno marrón grueso, color plano
+de cómic, trama de medios tonos, pollitos amarillo mantequilla con mofletes
+rosas, pueblo de casas huevo con techos rosas y banderines, y la persona
+convertida en personaje con la capucha de pollito conservando el pelo rojo
+oscuro.
+
+La diferencia está en el modelo, y conviene probar los dos:
+
+- **Tecla 7, por klein.** Reimagina cada cuadro por separado, así que el mundo
+  respira y cambia. Se cobra por cuadro. Es el que abre por defecto.
+- **Tecla 8, por Lucy.** Video a video enganchado a tu movimiento: parpadeas y
+  el personaje parpadea. Más estable y más creíble como personaje, pero se
+  cobra por tiempo conectado.
+
+El estilo Personalizado toma el prompt libre y el modelo que elijas en el panel
+de la llave.
 
 ## Grabar para redes
 
 La tecla **O** esconde toda la interfaz y deja solo el video con el marco: se
 van los indicadores, la barra de estilos, el botón de la llave y hasta el
-puntero del ratón. Las teclas 1 a 8 siguen cambiando de estilo con la interfaz
+puntero del ratón. Las teclas 1 a 9 siguen cambiando de estilo con la interfaz
 oculta, así que puedes cambiar de mundo a media grabación sin que se vea un
 solo botón. Pulsa **O** otra vez para recuperarla.
 

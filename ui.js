@@ -87,15 +87,36 @@ export function createUI({ onStyle, onSettings, onEconomy, styleId, settings }) 
   });
 
   window.addEventListener("keydown", (ev) => {
+    // Escape sale del campo y cierra el panel, se esté escribiendo o no.
+    if (ev.key === "Escape") {
+      ev.target?.blur?.();
+      panel.classList.add("hidden");
+      return;
+    }
+    // Mientras se escribe, las teclas son texto y no atajos.
     if (ev.target instanceof HTMLInputElement) return;
     if (ev.target instanceof HTMLTextAreaElement) return;
+
+    // Cada atajo cancela la acción por defecto: elegir el estilo libre enfoca
+    // el cuadro de prompt, y sin esto el propio número se escribiría dentro.
+    const key = ev.key.toLowerCase();
     const idx = parseInt(ev.key, 10) - 1;
-    if (idx >= 0 && idx < STYLES.length) select(STYLES[idx].id);
-    if (ev.key === "Escape") panel.classList.add("hidden");
-    if (ev.key.toLowerCase() === "o") toggleClean();
-    if (ev.key.toLowerCase() === "v") toggleVertical();
-    if (ev.key === "+" || ev.key === "=") setZoom(zoom + 0.1);
-    if (ev.key === "-" || ev.key === "_") setZoom(zoom - 0.1);
+    if (idx >= 0 && idx < STYLES.length) {
+      ev.preventDefault();
+      select(STYLES[idx].id);
+    } else if (key === "o") {
+      ev.preventDefault();
+      toggleClean();
+    } else if (key === "v") {
+      ev.preventDefault();
+      toggleVertical();
+    } else if (ev.key === "+" || ev.key === "=") {
+      ev.preventDefault();
+      setZoom(zoom + 0.1);
+    } else if (ev.key === "-" || ev.key === "_") {
+      ev.preventDefault();
+      setZoom(zoom - 0.1);
+    }
   });
 
   // Modo grabación: fuera todo menos el video y el marco. El aviso se

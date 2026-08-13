@@ -79,32 +79,33 @@ export const STYLES = [
   {
     // El estilo propio de la marca Miss Yera. Este es el diferencial.
     //
-    // El prompt está calcado de las referencias de la marca: contorno marrón
-    // oscuro y grueso, color plano de cómic, trama de medios tonos, pollitos
-    // amarillo mantequilla con mofletes rosas, y el pueblo de casas huevo con
-    // techos rosas. A la persona la convierte en personaje de dibujo con la
-    // capucha de pollito, conservando el pelo rojo oscuro.
+    // La clave está en lo que NO cambia. En las ilustraciones de la marca ella
+    // sale siendo ella (su cara, su melena roja, su ropa, su pose) solo que
+    // dibujada, y el pollito es un personaje aparte que la acompaña, nunca un
+    // disfraz. Así que el prompt pide un cambio de trazo, no de persona, y lo
+    // dice explícitamente porque si no el modelo se toma libertades.
+    //
+    // Es corto a propósito: klein va a tres pasos de difusión y un prompt con
+    // muchas exigencias compitiendo se le vuelve papilla.
     id: "pollito",
     label: "Mundo Pollito",
     backend: "klein",
     prompt:
-      "Turn this into the Mundo Pollito cartoon world: bold dark brown " +
-      "outlines on everything, flat cel-shaded colors, halftone dot shading, " +
-      "clean sticker linework. Make the person a cute cartoon character with " +
-      "big glossy eyes, pink blushed cheeks and dark red wavy hair, wearing a " +
-      "butter-yellow baby chick hoodie with a small orange beak and dot eyes " +
-      "on the hood. Behind, a village of egg-shaped houses with pink domed " +
-      "roofs, pink and yellow triangle bunting across a bright blue sky, " +
-      "fluffy white clouds, and chubby yellow baby chicks with rosy cheeks.",
+      "Turn this into a hand-drawn cartoon version of the same person: keep " +
+      "her face, her long red wavy hair, her clothes and her pose exactly as " +
+      "they are, only redrawn. Bold dark brown outlines, flat cel-shaded " +
+      "colors, big expressive brown eyes with long lashes, soft pink blush, " +
+      "warm cream background. A small round yellow baby chick with an orange " +
+      "beak stands beside her.",
     // El respaldo local se tiñe de rosa con una mezcla, no con un giro de
     // tono: así sale rosa pase lo que pase delante de la cámara.
     filter: "saturate(0.3) brightness(1.2) contrast(1.05)",
     tint: { color: "#ff2e88", mode: "color", alpha: 0.85 },
   },
   {
-    // El mismo mundo de la marca, pero por Lucy: video a video enganchado al
-    // movimiento. Parpadeas y el personaje parpadea. Mismas señas visuales,
-    // fraseadas con la plantilla de Decart.
+    // El mismo dibujo, pero por Lucy: video a video enganchado al movimiento.
+    // Parpadeas y el dibujo parpadea. Mismas señas, fraseadas con la
+    // plantilla de Decart y con el mismo encargo de no cambiar a la persona.
     //
     // Ojo: Lucy se cobra por tiempo conectado, no por cuadro. Por eso el
     // estilo por defecto sigue siendo el de klein.
@@ -112,14 +113,12 @@ export const STYLES = [
     label: "Pollito animado",
     backend: "lucy",
     prompt:
-      "Change the style of the video to the Mundo Pollito cartoon world: " +
-      "bold dark brown outlines on everything, flat cel-shaded colors and " +
-      "halftone dot shading; the person becomes a cute cartoon character " +
-      "with big glossy eyes, pink blushed cheeks and dark red wavy hair, " +
-      "wearing a butter-yellow baby chick hoodie with a small orange beak " +
-      "and dot eyes on the hood; behind them a village of egg-shaped houses " +
-      "with pink domed roofs, pink and yellow triangle bunting and a bright " +
-      "blue sky with fluffy white clouds.",
+      "Change the style of the video to a hand-drawn cartoon: bold dark " +
+      "brown outlines, flat cel-shaded colors, big expressive brown eyes " +
+      "with long lashes, soft pink blush and a warm cream background; keep " +
+      "the person's face, her long red wavy hair, her clothes and her " +
+      "movements exactly as they are, only redrawn. A small round yellow " +
+      "baby chick with an orange beak stands beside her.",
     filter: "saturate(0.35) brightness(1.18) contrast(1.08)",
     tint: { color: "#ffcf3d", mode: "color", alpha: 0.7 },
   },

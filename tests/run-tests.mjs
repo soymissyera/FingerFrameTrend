@@ -361,10 +361,19 @@ test("cada estilo con backend trae prompt del fraseo correcto", () => {
   }
 });
 
-// Las señas de identidad de la marca, tal cual las referencias: contorno
-// marrón grueso, trama de puntos, pollitos, rosa, y la capucha sobre la
-// persona. Los dos estilos Pollito tienen que pedir exactamente lo mismo.
-const SENAS_POLLITO = ["brown outline", "halftone", "chick", "pink", "hoodie", "cartoon", "red wavy hair"];
+// Las señas de la marca, tal cual las referencias: contorno marrón grueso,
+// color plano, ojos grandes, fondo crema, el pollito como personaje aparte
+// y, sobre todo, la persona intacta. Los dos estilos piden lo mismo.
+const SENAS_POLLITO = [
+  "brown outline",
+  "cel-shaded",
+  "red wavy hair",
+  "cartoon",
+  "chick",
+  "cream",
+  // El encargo que evita que el modelo la disfrace o le cambie la cara.
+  "exactly as they are",
+];
 
 test("el Mundo Pollito existe, es de la marca y va por klein", () => {
   const pollito = findStyle("pollito");

@@ -18,6 +18,7 @@
       --line: rgba(255, 255, 255, 0.12);
       --text: #f2eef1;
       --muted: rgba(255, 255, 255, 0.62);
+      --riel: 202px;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
@@ -29,9 +30,12 @@
     }
     button, input, textarea { font-family: inherit; }
 
+    /* El video vive en el centro y los controles en columnas a los lados, así
+       la cámara queda despejada y grabar es recortar el rectángulo del medio. */
     #stage {
       position: fixed;
       inset: 0;
+      padding: 14px var(--riel);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -90,16 +94,69 @@
     @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
     @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
-    /* ---- indicadores arriba a la izquierda ---- */
-    #hud {
+    /* ---- rieles laterales ---- */
+    .riel {
       position: fixed;
-      top: 16px; left: 16px;
+      top: 0; bottom: 0;
+      width: var(--riel);
       z-index: 7;
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px;
+      overflow-y: auto;
+      transition: opacity 0.25s;
+    }
+    #toolbar { left: 0; }
+    #riel-der { right: 0; align-items: stretch; }
+
+    #hud {
+      display: flex;
+      flex-direction: column;
       gap: 8px;
       pointer-events: none;
+      margin-top: 6px;
+    }
+    /* En el riel el fondo de la página es casi negro: las pastillas necesitan
+       algo más de cuerpo para no desaparecer. */
+    .riel .chip {
+      background: rgba(34, 30, 40, 0.92);
+      line-height: 1.35;
+      text-align: left;
+    }
+    #live-pill.on { display: flex; align-items: flex-start; }
+    #live-pill .dot { flex: none; margin-top: 4px; }
+
+    /* ---- barrita de transformación ---- */
+    #pasos-caja {
+      background: rgba(20, 20, 24, 0.72);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    #pasos-caja label {
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: rgba(255, 255, 255, 0.82);
+    }
+    #pasos-valor { color: var(--pink); }
+    #pasos {
+      width: 100%;
+      accent-color: var(--pink);
+      cursor: pointer;
+      margin: 0;
+    }
+    #pasos-caja .extremos {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.45);
     }
     .chip {
       display: inline-flex;
@@ -135,9 +192,6 @@
 
     /* ---- botón y panel de la clave ---- */
     #key-btn {
-      position: fixed;
-      top: 16px; right: 16px;
-      z-index: 9;
       appearance: none;
       border: 1px solid var(--line);
       background: rgba(20, 20, 24, 0.72);
@@ -145,7 +199,7 @@
       border-radius: 12px;
       font-size: 18px;
       line-height: 1;
-      padding: 9px 12px;
+      padding: 10px 12px;
       cursor: pointer;
       transition: background 0.15s, border-color 0.15s;
     }
@@ -205,29 +259,18 @@
     .note { font-size: 11.5px; color: rgba(255, 255, 255, 0.45); line-height: 1.5; margin-bottom: 0 !important; }
 
     /* ---- selector de estilos ---- */
-    #toolbar {
-      position: fixed;
-      left: 50%; bottom: 20px;
-      transform: translateX(-50%);
-      z-index: 6;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      max-width: calc(100vw - 24px);
-      gap: 6px;
-      padding: 8px;
+    #toolbar button {
+      appearance: none;
+      border: 1px solid transparent;
       background: rgba(20, 20, 24, 0.72);
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 14px;
-    }
-    #toolbar button {
-      appearance: none; border: none; background: transparent;
-      color: rgba(255, 255, 255, 0.75);
-      font-size: 13px; font-weight: 600;
-      padding: 8px 13px; border-radius: 10px; cursor: pointer;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 12.5px; font-weight: 600;
+      text-align: left;
+      padding: 9px 11px; border-radius: 11px; cursor: pointer;
       transition: background 0.15s, color 0.15s;
       white-space: nowrap;
+      display: flex; align-items: center; gap: 7px;
     }
     #toolbar button:hover { background: rgba(255, 255, 255, 0.08); }
     #toolbar button.active { background: var(--pink); color: var(--on-pink); }
@@ -242,6 +285,7 @@
        vez de recortar, se encaja el 16:9 dentro de un lienzo 9:16 con el rosa
        de la marca arriba y abajo, que además deja sitio para los títulos. */
     body.vertical #stage {
+      padding: 0;
       inset: auto;
       top: 50%;
       left: 50%;
@@ -265,10 +309,8 @@
     }
 
     /* ---- modo grabación: solo el video y el marco ---- */
-    body.limpio #hud,
-    body.limpio #toolbar,
+    body.limpio .riel,
     body.limpio #hint,
-    body.limpio #key-btn,
     body.limpio #key-panel {
       opacity: 0;
       pointer-events: none;
@@ -298,9 +340,25 @@
     }
     #toast.show { opacity: 1; }
 
-    @media (max-width: 720px) {
+    /* Por debajo de esto no hay ancho para dos columnas laterales: si se
+       mantuvieran, el video quedaría en una franja diminuta en el centro.
+       Los rieles vuelven a ser barras arriba y abajo. */
+    @media (max-width: 1040px) {
+      :root { --riel: 0px; }
+      .riel {
+        top: auto; bottom: 0; width: 100%;
+        flex-direction: row; flex-wrap: wrap;
+        justify-content: center; align-items: center;
+        gap: 6px; padding: 8px;
+        overflow: visible;
+      }
+      #riel-der { top: 0; bottom: auto; }
+      #hud { flex-direction: row; margin-top: 0; }
+      #pasos-caja { flex: 0 1 220px; padding: 8px 12px; }
+      #pasos-caja .extremos { display: none; }
       #toolbar button { padding: 7px 10px; font-size: 12px; }
       #toolbar button .badge { display: none; }
+      #toast { bottom: 120px; }
     }
   </style>
 </head>
@@ -316,20 +374,31 @@
     <canvas id="canvas"></canvas>
   </div>
 
-  <div id="hud">
-    <div id="live-pill" class="chip"><span class="dot"></span><span id="live-text"></span></div>
-    <div id="stats" class="chip"></div>
-  </div>
 
   <div id="hint">
     <div id="hint-text">Encuadra tu toma: las dos manos arriba, pulgar e índice bien abiertos.</div>
   </div>
 
-  <div id="toolbar"></div>
+  <!-- Riel izquierdo: los estilos, fuera del video para poder grabar limpio -->
+  <div id="toolbar" class="riel"></div>
+
+  <!-- Riel derecho: clave, transformación e indicadores -->
+  <div id="riel-der" class="riel">
+    <button id="key-btn" type="button" title="Clave de fal" aria-label="Clave de fal">🔑</button>
+
+    <div id="pasos-caja">
+      <label for="pasos">Transformación <span id="pasos-valor">3</span>/6</label>
+      <input id="pasos" type="range" min="1" max="6" step="1" value="3" />
+      <div class="extremos"><span>te pareces</span><span>más estilo</span></div>
+    </div>
+
+    <div id="hud">
+      <div id="live-pill" class="chip"><span class="dot"></span><span id="live-text"></span></div>
+      <div id="stats" class="chip"></div>
+    </div>
+  </div>
 
   <div id="toast" role="status" aria-live="polite"></div>
-
-  <button id="key-btn" type="button" title="Clave de fal" aria-label="Clave de fal">🔑</button>
 
   <div id="key-panel" class="hidden">
     <div class="head">
@@ -361,7 +430,7 @@
       </span>
     </label>
     <p class="note">
-      <strong>Versión 2026-08-13 · 23:40</strong> — si esta fecha no cambia
+      <strong>Versión 2026-08-14 · 00:05</strong> — si esta fecha no cambia
       después de recargar, tu navegador te está sirviendo una copia vieja:
       recarga con Cmd+Shift+R.
     </p>

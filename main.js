@@ -58,13 +58,14 @@ const ui = createUI({
     styleId = id;
     syncBackend();
   },
-  onSteps: (delta) => {
+  onSteps: (valor) => {
     // Menos pasos, más se parece a la entrada; más pasos, más estilo.
-    const n = backends.setSteps(backends.kleinSteps + delta);
+    const n = backends.setSteps(valor);
     localStorage.setItem("fal-klein-steps", String(n));
+    ui.setSteps(n);
     ui.toast(
       `Transformación ${n} de 6 · ${n <= 2 ? "más parecida a ti" : n >= 5 ? "mucho más estilo" : "equilibrado"}`,
-      1800
+      1500
     );
   },
   onEconomy: (on) => {
@@ -82,6 +83,9 @@ const ui = createUI({
     syncBackend();
   },
 });
+
+// La barrita arranca mostrando lo que de verdad tiene el backend.
+ui.setSteps(backends.kleinSteps);
 
 function currentStyle() {
   return findStyle(styleId);

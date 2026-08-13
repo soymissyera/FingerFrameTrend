@@ -63,7 +63,7 @@ el encuadre completo y el recorte es 100% local.
 | O | Ocultar o mostrar la interfaz (modo grabación) | — |
 | V | Formato vertical 9:16 | — |
 | + − | Zoom dentro del marco vertical | — |
-| , . | Cuánto te transforma el modelo, de 1 a 6 | — |
+| , . | Cuánto te transforma el modelo, de 1 a 6 (también con la barrita) | — |
 
 El **Mundo Pollito** es el estilo propio de la marca. La regla que lo define
 es lo que NO cambia: ella sigue siendo ella, su cara, su melena roja, su ropa
@@ -91,9 +91,14 @@ de la llave.
 
 ## Grabar para redes
 
+Los controles viven en dos columnas a los lados, nunca encima del video: los
+estilos a la izquierda, y a la derecha la llave, la barrita de transformación
+y los indicadores. Así la cámara queda despejada y grabar es recortar el
+rectángulo del medio. Por debajo de 1040 px de ancho no caben las columnas y
+pasan a ser barras arriba y abajo.
+
 La tecla **O** esconde toda la interfaz y deja solo el video con el marco: se
-van los indicadores, la barra de estilos, el botón de la llave y hasta el
-puntero del ratón. Las teclas 1 a 9 siguen cambiando de estilo con la interfaz
+van los dos rieles, el botón de la llave y hasta el puntero del ratón. Las teclas 1 a 9 siguen cambiando de estilo con la interfaz
 oculta, así que puedes cambiar de mundo a media grabación sin que se vea un
 solo botón. Pulsa **O** otra vez para recuperarla.
 

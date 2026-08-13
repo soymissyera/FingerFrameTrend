@@ -55,6 +55,13 @@ export function persistEconomy(on) {
  * @param {string}            opts.styleId       estilo inicial
  * @param {object}            opts.settings      ajustes iniciales
  */
+/** ¿El foco está en algo donde la usuaria escribe de verdad? */
+function esCampoDeTexto(el) {
+  if (el instanceof HTMLTextAreaElement) return true;
+  if (!(el instanceof HTMLInputElement)) return false;
+  return !["range", "checkbox", "radio", "button"].includes(el.type);
+}
+
 export function createUI({ onStyle, onSettings, onEconomy, onSteps, styleId, settings }) {
   const el = (id) => document.getElementById(id);
   const toolbar = el("toolbar");
@@ -93,9 +100,10 @@ export function createUI({ onStyle, onSettings, onEconomy, onSteps, styleId, set
       panel.classList.add("hidden");
       return;
     }
-    // Mientras se escribe, las teclas son texto y no atajos.
-    if (ev.target instanceof HTMLInputElement) return;
-    if (ev.target instanceof HTMLTextAreaElement) return;
+    // Mientras se ESCRIBE, las teclas son texto y no atajos. Pero un control
+    // como la barrita no es escritura: si se tragara los atajos, tocarla
+    // dejaría la O y las teclas de estilo muertas hasta hacer clic fuera.
+    if (esCampoDeTexto(ev.target)) return;
 
     // Cada atajo cancela la acción por defecto: elegir el estilo libre enfoca
     // el cuadro de prompt, y sin esto el propio número se escribiría dentro.
@@ -112,10 +120,10 @@ export function createUI({ onStyle, onSettings, onEconomy, onSteps, styleId, set
       toggleVertical();
     } else if (ev.key === "," || ev.key === "<") {
       ev.preventDefault();
-      onSteps(-1);
+      onSteps(Number(pasosInput.value) - 1);
     } else if (ev.key === "." || ev.key === ">") {
       ev.preventDefault();
-      onSteps(+1);
+      onSteps(Number(pasosInput.value) + 1);
     } else if (ev.key === "+" || ev.key === "=") {
       ev.preventDefault();
       setZoom(zoom + 0.1);
@@ -193,6 +201,12 @@ export function createUI({ onStyle, onSettings, onEconomy, onSteps, styleId, set
   customPrompt.value = settings.customPrompt;
   backendRadios.forEach((r) => (r.checked = r.value === settings.customBackend));
 
+  // Barrita de transformación: es la palanca del parecido, así que va a la
+  // vista y no escondida en el panel.
+  const pasosInput = el("pasos");
+  const pasosValor = el("pasos-valor");
+  pasosInput.addEventListener("input", () => onSteps(Number(pasosInput.value)));
+
   // El ahorro se aplica al instante, sin esperar a guardar: es dinero.
   const economy = el("economy");
   economy.checked = settings.economy;
@@ -229,7 +243,10 @@ export function createUI({ onStyle, onSettings, onEconomy, onSteps, styleId, set
     },
     /** @param {"idle"|"connecting"|"live"|"error"|"local"} state */
     setStatus(state, text) {
-      pill.className = state && state !== "idle" ? `on ${state}` : "";
+      // Conservar "chip": es la que le da fondo y forma. Reescribir el
+      // className entero se la llevaba por delante y la pastilla salía como
+      // texto suelto sobre el video.
+      pill.className = `chip${state && state !== "idle" ? ` on ${state}` : ""}`;
       pillText.textContent = text || "";
     },
     setStats(text) {
@@ -252,6 +269,11 @@ export function createUI({ onStyle, onSettings, onEconomy, onSteps, styleId, set
     },
     openKeyPanel() {
       panel.classList.remove("hidden");
+    },
+    /** Refleja el valor ya aplicado por el backend. */
+    setSteps(n) {
+      pasosInput.value = String(n);
+      pasosValor.textContent = String(n);
     },
     toast,
     toggleClean,

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finger Frame IA en tiempo real · Miss Yera</title>
+  <meta name="description" content="Haz el marco de director con los dedos y el área dentro de tus manos se convierte en una ventana a un mundo generado por IA en tiempo real." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐣</text></svg>" />
+  <style>
+    :root {
+      --pink: #ff2e88;
+      --pink-soft: rgba(255, 46, 136, 0.16);
+      --bg: #0a0a0c;
+      --panel: rgba(22, 20, 26, 0.88);
+      --line: rgba(255, 255, 255, 0.12);
+      --text: #f2eef1;
+      --muted: rgba(255, 255, 255, 0.62);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      overflow: hidden;
+    }
+    button, input, textarea { font-family: inherit; }
+
+    #stage {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(1100px 620px at 50% 12%, rgba(255, 46, 136, 0.09), transparent 70%),
+        var(--bg);
+    }
+    canvas { max-width: 100%; max-height: 100%; border-radius: 14px; }
+    video { display: none; }
+
+    /* ---- pantalla de carga ---- */
+    #status {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      background: var(--bg);
+      transition: opacity 0.4s;
+    }
+    #status.hidden { opacity: 0; pointer-events: none; }
+    #status-text { font-size: 15px; color: var(--muted); max-width: 34ch; line-height: 1.5; }
+    .spinner {
+      width: 30px; height: 30px;
+      border: 3px solid rgba(255, 255, 255, 0.14);
+      border-top-color: var(--pink);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ---- pista inferior ---- */
+    #hint {
+      position: fixed;
+      left: 0; right: 0;
+      bottom: 92px;
+      z-index: 5;
+      text-align: center;
+      padding: 0 16px;
+      pointer-events: none;
+      transition: opacity 0.4s;
+      animation: float 3.2s ease-in-out infinite;
+    }
+    #hint.hidden { opacity: 0; }
+    #hint-text {
+      font-size: 15px;
+      color: rgba(255, 255, 255, 0.9);
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.85);
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+    /* ---- indicadores arriba a la izquierda ---- */
+    #hud {
+      position: fixed;
+      top: 16px; left: 16px;
+      z-index: 7;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(20, 20, 24, 0.72);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    #live-pill { display: none; }
+    #live-pill.on { display: inline-flex; }
+    #live-pill .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #4ade80;
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+    #live-pill.connecting .dot { background: #ffc24b; }
+    #live-pill.error .dot { background: #ff6b5e; animation: none; }
+    #live-pill.local .dot { background: var(--pink); }
+    #stats {
+      font-size: 11.5px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--muted);
+      padding: 5px 11px;
+    }
+
+    /* ---- botón y panel de la clave ---- */
+    #key-btn {
+      position: fixed;
+      top: 16px; right: 16px;
+      z-index: 9;
+      appearance: none;
+      border: 1px solid var(--line);
+      background: rgba(20, 20, 24, 0.72);
+      backdrop-filter: blur(12px);
+      border-radius: 12px;
+      font-size: 18px;
+      line-height: 1;
+      padding: 9px 12px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    #key-btn:hover { background: var(--pink-soft); border-color: rgba(255, 46, 136, 0.4); }
+
+    #key-panel {
+      position: fixed;
+      top: 64px; right: 16px;
+      z-index: 8;
+      width: 360px;
+      max-width: calc(100vw - 32px);
+      max-height: calc(100vh - 88px);
+      overflow-y: auto;
+      background: var(--panel);
+      backdrop-filter: blur(18px);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    #key-panel.hidden { opacity: 0; transform: translateY(-8px); pointer-events: none; }
+    #key-panel h2 { font-size: 15px; margin-bottom: 8px; }
+    #key-panel h3 { font-size: 13px; margin: 16px 0 8px; color: var(--pink); letter-spacing: 0.02em; }
+    #key-panel p { font-size: 12.5px; color: var(--muted); line-height: 1.55; margin-bottom: 10px; }
+    #key-panel a { color: var(--pink); }
+    #key-panel .head { display: flex; justify-content: space-between; align-items: center; }
+    #key-close {
+      appearance: none; border: none; background: transparent;
+      color: var(--muted); font-size: 20px; line-height: 1; cursor: pointer; padding: 0 4px;
+    }
+    #key-panel input[type="password"], #key-panel textarea {
+      width: 100%;
+      padding: 9px 11px;
+      border-radius: 9px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(0, 0, 0, 0.35);
+      color: var(--text);
+      font-size: 13px;
+      margin-bottom: 10px;
+      resize: vertical;
+    }
+    #key-panel input[type="password"] { font-family: ui-monospace, SFMono-Regular, monospace; }
+    #key-panel input:focus, #key-panel textarea:focus { outline: 2px solid var(--pink); outline-offset: 1px; }
+    #key-panel label.check, #key-panel label.radio {
+      display: flex; align-items: flex-start; gap: 8px;
+      font-size: 12.5px; color: rgba(255, 255, 255, 0.78);
+      margin-bottom: 8px; cursor: pointer; line-height: 1.4;
+    }
+    #key-panel input[type="checkbox"], #key-panel input[type="radio"] { accent-color: var(--pink); margin-top: 2px; }
+    .row { display: flex; gap: 8px; margin: 14px 0 10px; }
+    .row button {
+      flex: 1; appearance: none; border: none; border-radius: 10px;
+      padding: 9px 0; font-size: 13px; font-weight: 700; cursor: pointer;
+    }
+    #key-save { background: var(--pink); color: #fff; }
+    #key-clear { background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.82); }
+    .note { font-size: 11.5px; color: rgba(255, 255, 255, 0.45); line-height: 1.5; margin-bottom: 0 !important; }
+
+    /* ---- selector de estilos ---- */
+    #toolbar {
+      position: fixed;
+      left: 50%; bottom: 20px;
+      transform: translateX(-50%);
+      z-index: 6;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: calc(100vw - 24px);
+      gap: 6px;
+      padding: 8px;
+      background: rgba(20, 20, 24, 0.72);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+    }
+    #toolbar button {
+      appearance: none; border: none; background: transparent;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 13px; font-weight: 600;
+      padding: 8px 13px; border-radius: 10px; cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    #toolbar button:hover { background: rgba(255, 255, 255, 0.08); }
+    #toolbar button.active { background: var(--pink); color: #fff; }
+    #toolbar button .key { opacity: 0.55; font-weight: 400; margin-right: 6px; font-size: 11px; }
+    #toolbar button .badge {
+      opacity: 0.5; font-weight: 700; margin-left: 7px;
+      font-size: 9.5px; letter-spacing: 0.06em; vertical-align: 1px;
+    }
+    @media (max-width: 720px) {
+      #toolbar button { padding: 7px 10px; font-size: 12px; }
+      #toolbar button .badge { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="status">
+    <div class="spinner"></div>
+    <div id="status-text">Iniciando…</div>
+  </div>
+
+  <div id="stage">
+    <video id="video" autoplay playsinline muted></video>
+    <video id="lucy" autoplay playsinline muted></video>
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <div id="hud">
+    <div id="live-pill" class="chip"><span class="dot"></span><span id="live-text"></span></div>
+    <div id="stats" class="chip"></div>
+  </div>
+
+  <div id="hint">
+    <div id="hint-text">Encuadra tu toma: las dos manos arriba, pulgar e índice bien abiertos.</div>
+  </div>
+
+  <div id="toolbar"></div>
+
+  <button id="key-btn" type="button" title="Clave de fal" aria-label="Clave de fal">🔑</button>
+
+  <div id="key-panel" class="hidden">
+    <div class="head">
+      <h2>Clave de fal</h2>
+      <button id="key-close" type="button" aria-label="Cerrar">×</button>
+    </div>
+    <p>
+      La ventana muestra un <strong>mundo IA generado en tiempo real</strong> en
+      <a href="https://fal.ai" target="_blank" rel="noopener">fal</a> con dos modelos:
+      <a href="https://fal.ai/models/decart/lucy-2-5/realtime" target="_blank" rel="noopener">Lucy&nbsp;2.5</a>
+      (video a video por WebRTC, realista y enganchado a tu movimiento) y
+      <a href="https://fal.ai/models/fal-ai/flux-2-klein-realtime/realtime" target="_blank" rel="noopener">FLUX.2&nbsp;[klein]</a>
+      (edición cuadro por cuadro, más libre y soñadora).
+      Saca tu clave en <a href="https://fal.ai/dashboard/keys" target="_blank" rel="noopener">fal.ai/dashboard/keys</a>.
+    </p>
+    <input id="key-input" type="password" placeholder="tu clave de fal (id:secreto)" autocomplete="off" spellcheck="false" />
+    <label class="check">
+      <input type="checkbox" id="key-remember" />
+      Recordar en este dispositivo
+    </label>
+
+    <h3>Estilo personalizado</h3>
+    <textarea id="style-custom" rows="3"
+      placeholder="Lo usa el estilo Personalizado. Lucy funciona mejor con su plantilla: «Change the style of the video to stained glass: …». Klein prefiere fraseo de edición: «Turn this into a living oil painting»."></textarea>
+    <label class="radio">
+      <input type="radio" name="custom-backend" value="lucy" />
+      <span>Lucy 2.5: realista, sigue tu movimiento. Se cobra por tiempo conectado.</span>
+    </label>
+    <label class="radio">
+      <input type="radio" name="custom-backend" value="klein" checked />
+      <span>FLUX.2 klein: creativo, reimagina cada cuadro. Se cobra por cuadro generado.</span>
+    </label>
+
+    <div class="row">
+      <button id="key-save" type="button">Guardar y conectar</button>
+      <button id="key-clear" type="button">Borrar</button>
+    </div>
+    <p class="note">
+      Tu clave se queda en tu navegador y solo se usa para acuñar tokens de sesión
+      de corta duración contra fal. Tu video no se guarda ni se sube a ningún otro
+      lado. La sesión de Lucy se corta al cambiar de estilo o cerrar la pestaña.
+      Sin clave, los estilos caen a un filtro local gratuito.
+    </p>
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

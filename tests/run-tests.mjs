@@ -375,7 +375,6 @@ const SENAS_POLLITO = [
   "same face",
   "same hair",
   "bubblegum pink",
-  "chick",
 ];
 
 // Cualquiera tiene que poder usarlo: nada de describir a una persona concreta,
@@ -403,6 +402,17 @@ test("los dos piden que siga siendo ella, con su mundo detrás", () => {
     for (const word of SENAS_POLLITO) {
       assert.ok(p.includes(word), `a ${id} le falta «${word}»`);
     }
+  }
+});
+
+test("el fondo va liso: pedir pollitos hacía que el modelo la descartara", () => {
+  // Probado en vivo: con "fondo rosa con pollitos", klein montó una maqueta 3D
+  // de pollitos de plástico y la persona no aparecía. El presupuesto de tres
+  // pasos no da para la escena y para ella.
+  for (const id of ["pollito", "pollito-3d"]) {
+    const p = findStyle(id).prompt.toLowerCase();
+    assert.ok(!p.includes("chick"), `${id} vuelve a pedir pollitos al modelo`);
+    assert.ok(p.includes("nothing else in the scene"), `${id} debe pedir fondo limpio`);
   }
 });
 

@@ -72,10 +72,16 @@ El **Mundo Pollito** es el estilo propio de la marca. La regla que lo define
 es lo que NO cambia: quien se ponga delante sale siendo quien es, su cara, su
 pelo, su ropa y su expresión, solo que dibujado. El prompt lo pide con
 mayúsculas («THIS EXACT PERSON, same face, same hair») porque sin esa orden el
-modelo se toma libertades y devuelve a otra persona. Detrás, el rosa bubblegum
-de la marca lleno de pollitos amarillos.
+modelo se toma libertades y devuelve a otra persona. Detrás, el rosa bubblegum de la marca,
+liso.
 
-El prompt no describe a nadie en concreto, y eso es deliberado. Describir a la
+El fondo va liso y sin pollitos, y eso costó una prueba en vivo aprenderlo:
+pidiendo «fondo rosa con pollitos», klein montó una maqueta 3D con pollitos de
+plástico y la persona no aparecía por ningún lado. A tres pasos de difusión el
+presupuesto no da para la escena y para quien está delante, así que se gasta
+entero en lo único que importa aquí.
+
+El prompt tampoco describe a nadie en concreto, y eso es deliberado. Describir a la
 dueña del repo («melena roja ondulada») tenía dos problemas: convertía en mujer
 pelirroja a cualquier otra persona que lo probara, y peleaba contra el parecido
 incluso con ella, porque el día que se recogiera el pelo el modelo se lo

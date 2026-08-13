@@ -90,19 +90,21 @@ export const STYLES = [
     // se recoja el pelo el modelo se lo soltaría igual. "El mismo pelo"
     // respeta lo que de verdad entra por la cámara.
     //
-    // Es corto a propósito: klein va a tres pasos de difusión y un prompt con
-    // muchas exigencias compitiendo se le vuelve papilla.
+    // Es corto a propósito, y sin pollitos en el fondo a propósito también.
+    // Con pollitos en el prompt, klein a tres pasos dedica el presupuesto a
+    // montar el decorado y descarta a la persona: en la prueba real salió una
+    // maqueta 3D con pollitos de plástico y ella no aparecía por ningún lado.
+    // "Fondo rosa liso, nada más en la escena" deja todo el presupuesto para
+    // lo único que importa aquí, que es quien está delante.
     id: "pollito",
     label: "Mundo Pollito",
     backend: "klein",
     prompt:
-      "Turn this into a cartoon illustration of THIS EXACT PERSON: same face, " +
-      "same facial features, same expression, same hair, same clothes, same " +
-      "pose, same body. Only the drawing style changes. Bold dark brown " +
-      "outlines, flat cel shading, smooth skin, bright expressive eyes, " +
-      "defined features, soft blush, flattering and idealized. Background: " +
-      "bright bubblegum pink filled with cute round yellow baby chicks with " +
-      "brown outlines and rosy cheeks.",
+      "Turn this into a cartoon portrait of THIS EXACT PERSON: same face, " +
+      "same hair, same clothes, same pose. Only the drawing style changes. " +
+      "Bold dark brown outlines, flat cel shading, smooth skin, bright " +
+      "expressive eyes, soft blush, flattering. Plain bubblegum pink " +
+      "background, nothing else in the scene.",
     // El respaldo local se tiñe de rosa con una mezcla, no con un giro de
     // tono: así sale rosa pase lo que pase delante de la cámara.
     filter: "saturate(0.3) brightness(1.2) contrast(1.05)",
@@ -117,12 +119,10 @@ export const STYLES = [
     label: "Pollito animado",
     backend: "klein",
     prompt:
-      "Turn this into a 3D animated movie character of THIS EXACT PERSON: " +
-      "same face, same facial features, same expression, same hair, same " +
-      "clothes, same body. Soft rounded 3D shading, big glossy eyes, smooth " +
-      "skin, warm cinematic light, flattering and idealized. Background: " +
-      "bright bubblegum pink with fluffy round yellow baby chicks bouncing " +
-      "around.",
+      "Turn this into a 3D cartoon portrait of THIS EXACT PERSON: same face, " +
+      "same hair, same clothes, same pose. Soft rounded 3D shading, big " +
+      "glossy eyes, smooth skin, warm light, flattering. Plain bubblegum " +
+      "pink background, nothing else in the scene.",
     filter: "saturate(0.45) brightness(1.16) contrast(1.06)",
     tint: { color: "#ffcf3d", mode: "color", alpha: 0.55 },
   },

@@ -1,0 +1,25 @@
+# Capturas y media local: el video de la usuaria nunca entra al repositorio.
+capturas/
+capturas-*/
+grabaciones/
+*.mp4
+*.mov
+*.webm
+*.gif
+*.png
+*.jpg
+*.jpeg
+# Salvo la media de ejemplo que sí se publica a propósito.
+!examples/**
+
+# Secretos: la clave de fal se ingresa en la interfaz, nunca en un archivo.
+.env
+.env.*
+*.key
+
+# Sistema y editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+node_modules/

@@ -371,11 +371,20 @@ test("cada estilo con backend trae prompt del fraseo correcto", () => {
 // Lo que comparten los dos estilos de la marca: es ELLA, no una chica
 // cualquiera, sobre el rosa de la marca y con pollitos alrededor.
 const SENAS_POLLITO = [
-  "this exact woman",
+  "this exact person",
   "same face",
-  "red wavy hair",
+  "same hair",
   "bubblegum pink",
   "chick",
+];
+
+// Cualquiera tiene que poder usarlo: nada de describir a una persona concreta,
+// que a los demás los convierte en ella. Con límites de palabra, que si no
+// "this" contiene "his" y salta sola.
+const NADA_PERSONAL = [
+  /\bwoman\b/, /\bwomen\b/, /\bman\b/, /\bmen\b/,
+  /\bshe\b/, /\bhe\b/, /\bher\b/, /\bhers\b/, /\bhis\b/,
+  /\bred\b/, /\bwavy\b/, /\bcurvy\b/, /\bblonde\b/,
 ];
 
 test("los dos estilos de la marca son de klein, que es el barato", () => {
@@ -393,6 +402,15 @@ test("los dos piden que siga siendo ella, con su mundo detrás", () => {
     const p = findStyle(id).prompt.toLowerCase();
     for (const word of SENAS_POLLITO) {
       assert.ok(p.includes(word), `a ${id} le falta «${word}»`);
+    }
+  }
+});
+
+test("los prompts no describen a nadie: sirven para cualquiera", () => {
+  for (const id of ["pollito", "pollito-3d"]) {
+    const p = findStyle(id).prompt.toLowerCase();
+    for (const patron of NADA_PERSONAL) {
+      assert.ok(!patron.test(p), `${id} da por hecho ${patron}`);
     }
   }
 });

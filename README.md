@@ -66,11 +66,18 @@ el encuadre completo y el recorte es 100% local.
 | , . | Cuánto te transforma el modelo, de 1 a 6 (también con la barrita) | — |
 
 El **Mundo Pollito** es el estilo propio de la marca. La regla que lo define
-es lo que NO cambia: ella sigue siendo ella, su cara, su melena roja, su ropa
-y su expresión, solo que dibujada. El prompt lo pide con mayúsculas («THIS
-EXACT WOMAN, same face, same features») porque sin esa orden el modelo se toma
-libertades y devuelve a otra persona. Detrás, el rosa bubblegum de la marca
-lleno de pollitos amarillos.
+es lo que NO cambia: quien se ponga delante sale siendo quien es, su cara, su
+pelo, su ropa y su expresión, solo que dibujado. El prompt lo pide con
+mayúsculas («THIS EXACT PERSON, same face, same hair») porque sin esa orden el
+modelo se toma libertades y devuelve a otra persona. Detrás, el rosa bubblegum
+de la marca lleno de pollitos amarillos.
+
+El prompt no describe a nadie en concreto, y eso es deliberado. Describir a la
+dueña del repo («melena roja ondulada») tenía dos problemas: convertía en mujer
+pelirroja a cualquier otra persona que lo probara, y peleaba contra el parecido
+incluso con ella, porque el día que se recogiera el pelo el modelo se lo
+soltaría igual. «El mismo pelo» respeta lo que de verdad entra por la cámara,
+sea quien sea. Hay una prueba que lo vigila.
 
 Hay dos versiones, y conviene probar las dos:
 

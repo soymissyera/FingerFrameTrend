@@ -79,11 +79,16 @@ export const STYLES = [
   {
     // El estilo propio de la marca Miss Yera. Este es el diferencial.
     //
-    // La clave está en lo que NO cambia. En las ilustraciones de la marca ella
-    // sale siendo ella (su cara, su melena roja, su ropa, su pose) solo que
-    // dibujada, y el pollito es un personaje aparte que la acompaña, nunca un
-    // disfraz. Así que el prompt pide un cambio de trazo, no de persona, y lo
-    // dice explícitamente porque si no el modelo se toma libertades.
+    // La clave está en lo que NO cambia: quien se ponga delante sale siendo
+    // quien es, solo que dibujado, y el pollito es un personaje aparte que
+    // acompaña, nunca un disfraz.
+    //
+    // El prompt no describe a nadie en concreto, dice "el mismo pelo, la misma
+    // ropa". Describir a la dueña ("melena roja ondulada") tenía dos
+    // problemas: convertía en mujer pelirroja a cualquier otra persona que lo
+    // usara, y peleaba contra el parecido incluso con ella, porque el día que
+    // se recoja el pelo el modelo se lo soltaría igual. "El mismo pelo"
+    // respeta lo que de verdad entra por la cámara.
     //
     // Es corto a propósito: klein va a tres pasos de difusión y un prompt con
     // muchas exigencias compitiendo se le vuelve papilla.
@@ -91,12 +96,13 @@ export const STYLES = [
     label: "Mundo Pollito",
     backend: "klein",
     prompt:
-      "Turn this into a cartoon illustration of THIS EXACT WOMAN: same face, " +
-      "same facial features, same expression, same long red wavy hair, same " +
-      "clothes, same pose. Only the drawing style changes. Bold dark brown " +
-      "outlines, flat cel shading, big brown eyes with long lashes, full " +
-      "glossy lips, smooth skin. Background: bright bubblegum pink filled " +
-      "with cute round yellow baby chicks with brown outlines and rosy cheeks.",
+      "Turn this into a cartoon illustration of THIS EXACT PERSON: same face, " +
+      "same facial features, same expression, same hair, same clothes, same " +
+      "pose, same body. Only the drawing style changes. Bold dark brown " +
+      "outlines, flat cel shading, smooth skin, bright expressive eyes, " +
+      "defined features, soft blush, flattering and idealized. Background: " +
+      "bright bubblegum pink filled with cute round yellow baby chicks with " +
+      "brown outlines and rosy cheeks.",
     // El respaldo local se tiñe de rosa con una mezcla, no con un giro de
     // tono: así sale rosa pase lo que pase delante de la cámara.
     filter: "saturate(0.3) brightness(1.2) contrast(1.05)",
@@ -111,11 +117,12 @@ export const STYLES = [
     label: "Pollito animado",
     backend: "klein",
     prompt:
-      "Turn this into a 3D animated movie character of THIS EXACT WOMAN: " +
-      "same face, same facial features, same expression, same long red wavy " +
-      "hair, same clothes. Soft rounded 3D shading, big glossy eyes, smooth " +
-      "skin, warm cinematic light. Background: bright bubblegum pink with " +
-      "fluffy round yellow baby chicks bouncing around her.",
+      "Turn this into a 3D animated movie character of THIS EXACT PERSON: " +
+      "same face, same facial features, same expression, same hair, same " +
+      "clothes, same body. Soft rounded 3D shading, big glossy eyes, smooth " +
+      "skin, warm cinematic light, flattering and idealized. Background: " +
+      "bright bubblegum pink with fluffy round yellow baby chicks bouncing " +
+      "around.",
     filter: "saturate(0.45) brightness(1.16) contrast(1.06)",
     tint: { color: "#ffcf3d", mode: "color", alpha: 0.55 },
   },

@@ -59,11 +59,27 @@ el encuadre completo y el recorte es 100% local.
 | 6 | Boceto a tinta | FLUX.2 klein |
 | 7 | **Mundo Pollito** | FLUX.2 klein |
 | 8 | Personalizado | el que elijas |
+| O | Ocultar o mostrar la interfaz (modo grabación) | — |
 
 El **Mundo Pollito** es el estilo propio de la marca: mundo ilustrado tierno
 en rosa y blanco, pollitos amarillos, nubes esponjosas, estética kawaii
 limpia. El estilo Personalizado toma el prompt libre y el modelo que elijas en
 el panel de la llave.
+
+## Grabar para redes
+
+La tecla **O** esconde toda la interfaz y deja solo el video con el marco: se
+van los indicadores, la barra de estilos, el botón de la llave y hasta el
+puntero del ratón. Las teclas 1 a 8 siguen cambiando de estilo con la interfaz
+oculta, así que puedes cambiar de mundo a media grabación sin que se vea un
+solo botón. Pulsa **O** otra vez para recuperarla.
+
+Al ocultar aparece un aviso recordando la tecla, que se desvanece solo a los
+dos segundos y medio. Espera a que se vaya antes de empezar a grabar.
+
+Orden recomendado: deja el estilo listo, comprueba en la pastilla que está
+generando, pulsa O, espera a que se vaya el aviso, y recién ahí graba la
+pantalla (en Mac, Cmd+Shift+5).
 
 ## Tu clave de fal
 

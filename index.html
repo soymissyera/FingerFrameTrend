@@ -233,6 +233,40 @@
       opacity: 0.5; font-weight: 700; margin-left: 7px;
       font-size: 9.5px; letter-spacing: 0.06em; vertical-align: 1px;
     }
+    /* ---- modo grabación: solo el video y el marco ---- */
+    body.limpio #hud,
+    body.limpio #toolbar,
+    body.limpio #hint,
+    body.limpio #key-btn,
+    body.limpio #key-panel {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    /* El puntero también sobra en una grabación. */
+    body.limpio { cursor: none; }
+
+    #toast {
+      position: fixed;
+      left: 50%;
+      bottom: 92px;
+      transform: translateX(-50%);
+      z-index: 12;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(20, 20, 24, 0.86);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      max-width: calc(100vw - 32px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s;
+    }
+    #toast.show { opacity: 1; }
+
     @media (max-width: 720px) {
       #toolbar button { padding: 7px 10px; font-size: 12px; }
       #toolbar button .badge { display: none; }
@@ -261,6 +295,8 @@
   </div>
 
   <div id="toolbar"></div>
+
+  <div id="toast" role="status" aria-live="polite"></div>
 
   <button id="key-btn" type="button" title="Clave de fal" aria-label="Clave de fal">🔑</button>
 
@@ -293,6 +329,14 @@
         sesión de Lucy se corta tras un minuto sin gesto y se reanuda sola.
       </span>
     </label>
+
+    <h3>Grabación</h3>
+    <p>
+      Pulsa <strong>O</strong> para ocultar toda la interfaz y grabar limpio:
+      se van los indicadores, la barra de estilos y hasta el puntero del ratón.
+      Las teclas 1 a 8 siguen cambiando de estilo con la interfaz oculta.
+      Pulsa <strong>O</strong> otra vez para recuperarla.
+    </p>
 
     <h3>Estilo personalizado</h3>
     <textarea id="style-custom" rows="3"

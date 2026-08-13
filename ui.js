@@ -92,7 +92,29 @@ export function createUI({ onStyle, onSettings, onEconomy, styleId, settings }) 
     const idx = parseInt(ev.key, 10) - 1;
     if (idx >= 0 && idx < STYLES.length) select(STYLES[idx].id);
     if (ev.key === "Escape") panel.classList.add("hidden");
+    if (ev.key.toLowerCase() === "o") toggleClean();
   });
+
+  // Modo grabación: fuera todo menos el video y el marco. El aviso se
+  // desvanece solo, para que no salga en la toma si esperas un segundo.
+  function toggleClean() {
+    const clean = document.body.classList.toggle("limpio");
+    if (clean) toast("Interfaz oculta · pulsa O para recuperarla");
+    else hideToast();
+  }
+
+  let toastTimer = null;
+  const toastEl = el("toast");
+  function toast(text, ms = 2600) {
+    toastEl.textContent = text;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(hideToast, ms);
+  }
+  function hideToast() {
+    clearTimeout(toastTimer);
+    toastEl.classList.remove("show");
+  }
 
   function select(id) {
     current = id;
@@ -174,5 +196,7 @@ export function createUI({ onStyle, onSettings, onEconomy, styleId, settings }) 
     openKeyPanel() {
       panel.classList.remove("hidden");
     },
+    toast,
+    toggleClean,
   };
 }

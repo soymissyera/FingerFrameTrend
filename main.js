@@ -50,6 +50,7 @@ const backends = new BackendManager({
 });
 backends.setKey(settings.apiKey);
 backends.setSteps(Number(localStorage.getItem("fal-klein-steps")) || backends.kleinSteps);
+backends.setFeedback(Number(localStorage.getItem("fal-klein-feedback")) || backends.kleinFeedback);
 
 const ui = createUI({
   styleId,
@@ -67,6 +68,12 @@ const ui = createUI({
       `Transformación ${n} de 6 · ${n <= 2 ? "más parecida a ti" : n >= 5 ? "mucho más estilo" : "equilibrado"}`,
       1500
     );
+  },
+  onArrastre: (v) => {
+    const n = backends.setFeedback(v);
+    localStorage.setItem("fal-klein-feedback", String(n));
+    ui.setArrastre(n);
+    ui.toast(`Arrastre ${n.toFixed(2)}`, 1200);
   },
   onEconomy: (on) => {
     settings.economy = on;
@@ -86,6 +93,7 @@ const ui = createUI({
 
 // La barrita arranca mostrando lo que de verdad tiene el backend.
 ui.setSteps(backends.kleinSteps);
+ui.setArrastre(backends.kleinFeedback);
 
 function currentStyle() {
   return findStyle(styleId);

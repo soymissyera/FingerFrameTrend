@@ -348,6 +348,10 @@ export class BackendManager {
     // Pasos de difusión de klein, ajustables en vivo: menos pasos = el
     // resultado se parece más a la imagen de entrada, o sea a ella.
     this.kleinSteps = KLEIN_PARAMS.num_inference_steps;
+    // Cuánto del cuadro anterior se arrastra al siguiente. Es la palanca de
+    // "no sigue mis movimientos": cuanto más se arrastra, más se queda pegado
+    // el mundo a lo que ya había en vez de a lo que ve la cámara ahora.
+    this.kleinFeedback = KLEIN_PARAMS.output_feedback_strength;
     this.lucySeconds = 0;
     this.lucySince = null;
     this.kleinSeconds = 0;
@@ -386,6 +390,12 @@ export class BackendManager {
 
   setKey(key) {
     this.apiKey = (key || "").trim();
+  }
+
+  /** Arrastre entre cuadros de klein, de 0.5 a 1. Devuelve el valor aplicado. */
+  setFeedback(v) {
+    this.kleinFeedback = Math.max(0.5, Math.min(1, Math.round(v * 100) / 100));
+    return this.kleinFeedback;
   }
 
   /** Pasos de difusión de klein, entre 1 y 6. Devuelve el valor aplicado. */
@@ -650,6 +660,7 @@ export class BackendManager {
       image_url: dataUri,
       ...KLEIN_PARAMS,
       num_inference_steps: this.kleinSteps,
+      output_feedback_strength: this.kleinFeedback,
     });
   }
 

@@ -62,7 +62,7 @@ function esCampoDeTexto(el) {
   return !["range", "checkbox", "radio", "button"].includes(el.type);
 }
 
-export function createUI({ onStyle, onSettings, onEconomy, onSteps, styleId, settings }) {
+export function createUI({ onStyle, onSettings, onEconomy, onSteps, onArrastre, styleId, settings }) {
   const el = (id) => document.getElementById(id);
   const toolbar = el("toolbar");
   const panel = el("key-panel");
@@ -206,6 +206,9 @@ export function createUI({ onStyle, onSettings, onEconomy, onSteps, styleId, set
   const pasosInput = el("pasos");
   const pasosValor = el("pasos-valor");
   pasosInput.addEventListener("input", () => onSteps(Number(pasosInput.value)));
+  const arrastreInput = el("arrastre");
+  const arrastreValor = el("arrastre-valor");
+  arrastreInput.addEventListener("input", () => onArrastre(Number(arrastreInput.value)));
 
   // El ahorro se aplica al instante, sin esperar a guardar: es dinero.
   const economy = el("economy");
@@ -274,6 +277,10 @@ export function createUI({ onStyle, onSettings, onEconomy, onSteps, styleId, set
     setSteps(n) {
       pasosInput.value = String(n);
       pasosValor.textContent = String(n);
+    },
+    setArrastre(v) {
+      arrastreInput.value = String(v);
+      arrastreValor.textContent = v.toFixed(2);
     },
     toast,
     toggleClean,

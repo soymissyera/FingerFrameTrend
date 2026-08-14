@@ -52,7 +52,11 @@ export function tamanoPollito(quad, factor = 0.17) {
 // Los pollitos viven en los BORDES del marco, nunca en el centro. En el
 // centro está la persona, y un pollito ahí no se lee como decorado del fondo
 // sino como una pegatina encima de la cara.
-export const ZONA_LIBRE = 0.3; // fracción central reservada a la persona
+// La mitad central del marco es de la persona. Antes era el 30 % y aun así
+// un pollito podía caerle al hombro si ella no estaba centrada.
+export const ZONA_LIBRE = 0.5;
+// Y además viven en el suelo del marco, nunca a la altura de la cara.
+export const SUELO = 0.62;
 
 /** Empuja una posición horizontal fuera de la franja central. */
 export function alBorde(u) {
@@ -149,8 +153,8 @@ export class Pollito {
   constructor(random) {
     this.random = random;
     // Repartidos entre el borde izquierdo y el derecho, nunca en el centro.
-    this.u = random() < 0.5 ? 0.08 + random() * 0.12 : 0.8 + random() * 0.12;
-    this.v = 0.62 + random() * 0.3;
+    this.u = random() < 0.5 ? 0.06 + random() * 0.14 : 0.8 + random() * 0.14;
+    this.v = SUELO + random() * 0.28;
     this.escala = 0.85 + random() * 0.45;
     this.mirandoIzquierda = random() < 0.5;
     this.inicio = 0;
@@ -169,14 +173,15 @@ export class Pollito {
     this.mirandoIzquierda = this.random() < 0.5;
     if (this.gracia === "pasea" || this.gracia === "voltereta") {
       // Pasean por su lado del marco, sin cruzar por delante de la persona.
-      const derecha = this.mirandoIzquierda ? false : this.random() < 0.5;
-      this.uDesde = derecha ? 0.72 : 0.28;
+      const derecha = this.random() < 0.5;
+      this.uDesde = derecha ? 0.76 : 0.24;
       this.uHasta = derecha ? 0.95 : 0.05;
-      this.v = 0.64 + this.random() * 0.26;
+      this.mirandoIzquierda = !derecha;
+      this.v = SUELO + this.random() * 0.26;
     }
     if (this.gracia === "asoma") {
       this.v = 1.12; // empieza fuera, por debajo del borde
-      this.u = this.random() < 0.5 ? 0.08 + this.random() * 0.14 : 0.78 + this.random() * 0.14;
+      this.u = this.random() < 0.5 ? 0.06 + this.random() * 0.16 : 0.78 + this.random() * 0.16;
     }
   }
 
@@ -225,6 +230,8 @@ export class Pollito {
       }
     }
     this.u = alBorde(Math.min(0.95, Math.max(0.05, this.u)));
+    // Nunca por encima de la mitad del marco: ahí está la cara.
+    this.v = Math.max(SUELO - 0.06, this.v);
     return this;
   }
 }

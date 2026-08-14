@@ -395,7 +395,7 @@ test("cada estilo con backend trae prompt del fraseo correcto", () => {
 // cualquiera, sobre el rosa de la marca y con pollitos alrededor.
 const SENAS_POLLITO = [
   "red wavy hair",
-  "exactly as they are",
+  "flattering curvy figure",
   "bubblegum pink",
   "never the person",
 ];
@@ -445,7 +445,8 @@ test("los estilos de la marca están afinados para su dueña, y eso es a propós
   for (const id of ["pollito", "pollito-3d"]) {
     const p = findStyle(id).prompt.toLowerCase();
     assert.ok(p.includes("red wavy hair"), `${id} perdió el pelo de la marca`);
-    assert.ok(p.includes("exactly as they are"), `${id} perdió el ancla de parecido`);
+    assert.ok(p.includes("glamorous"), `${id} perdió el retrato favorecedor`);
+    assert.ok(p.includes("long lashes") && p.includes("full glossy lips"), `${id} perdió los rasgos`);
   }
   // Los otros seis sí son de uso general: no dan por hecho quién está delante.
   for (const s of STYLES.slice(0, 6)) {
@@ -652,6 +653,7 @@ test("dejan libre el centro, que es donde está la persona", () => {
   assert.equal(alBorde(0.4), 0.5 - ZONA_LIBRE / 2, "y lo de la izquierda al borde izquierdo");
   assert.equal(alBorde(0.1), 0.1, "lo que ya está fuera no se toca");
   assert.equal(alBorde(0.9), 0.9);
+  assert.ok(ZONA_LIBRE >= 0.5, "la mitad central es de la persona, no de los pollitos");
 
   const b = new Bandada({ cantidad: 6, seed: 21 });
   const libre = [0.5 - ZONA_LIBRE / 2, 0.5 + ZONA_LIBRE / 2];
@@ -673,6 +675,8 @@ test("no se salen del marco por los lados, pasen las horas que pasen", () => {
     for (const p of b.pollitos) {
       assert.ok(p.u >= 0.05 && p.u <= 0.95, `u fuera de rango: ${p.u}`);
       assert.ok(p.v > -0.2 && p.v < 1.3, `v disparada: ${p.v}`);
+      // Nunca a la altura de la cara: siempre en el suelo del marco.
+      assert.ok(p.v > 0.5, `un pollito subió a la altura de la cara: v=${p.v}`);
     }
   }
 });

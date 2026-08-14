@@ -110,11 +110,13 @@ export const STYLES = [
     label: "Mundo Pollito",
     backend: "klein",
     prompt:
-      "Turn this into a hand-drawn cartoon version of the same person: keep " +
-      "her face, her long red wavy hair, her clothes and her pose exactly as " +
-      "they are, only redrawn. Bold dark brown outlines, flat cel-shaded " +
-      "colors, big expressive brown eyes with long lashes, soft pink blush, " +
-      "simple flat bubblegum pink background." + IDENTIDAD_KLEIN,
+      "Turn this into a beautiful glamorous cartoon illustration of the same " +
+      "person: keep her face, her long red wavy hair, her clothes and her " +
+      "pose, only redrawn and idealized. Bold dark brown outlines, flat " +
+      "cel-shaded colors, smooth flawless skin, big expressive brown eyes " +
+      "with long lashes, defined eyebrows, full glossy lips, soft pink " +
+      "blush, slim waist and flattering curvy figure. Simple flat bubblegum " +
+      "pink background." + IDENTIDAD_KLEIN,
     filter: "saturate(0.3) brightness(1.2) contrast(1.05)",
     tint: { color: "#fb8cd4", mode: "color", alpha: 0.85 },
   },
@@ -127,11 +129,13 @@ export const STYLES = [
     label: "Pollito animado",
     backend: "klein",
     prompt:
-      "Turn this into a soft 3D animated movie version of the same person: " +
-      "keep her face, her long red wavy hair, her clothes and her pose " +
-      "exactly as they are, only remade in 3D. Rounded 3D shading, big " +
-      "expressive brown eyes with long lashes, soft pink blush, smooth skin, " +
-      "warm light, simple flat bubblegum pink background." + IDENTIDAD_KLEIN,
+      "Turn this into a beautiful glamorous 3D animated movie version of the " +
+      "same person: keep her face, her long red wavy hair, her clothes and " +
+      "her pose, only remade in 3D and idealized. Rounded 3D shading, smooth " +
+      "flawless skin, big expressive brown eyes with long lashes, defined " +
+      "eyebrows, full glossy lips, soft pink blush, slim waist and " +
+      "flattering curvy figure, warm light. Simple flat bubblegum pink " +
+      "background." + IDENTIDAD_KLEIN,
     filter: "saturate(0.45) brightness(1.16) contrast(1.06)",
     tint: { color: "#ffcf3d", mode: "color", alpha: 0.55 },
   },

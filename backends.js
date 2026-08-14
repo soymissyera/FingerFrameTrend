@@ -28,7 +28,9 @@ export const KLEIN_ENDPOINT = "fal-ai/flux-2-klein-realtime/realtime";
 export const KLEIN_FRAME_SIZE = 768;
 export const KLEIN_JPEG_QUALITY = 0.5;
 export const KLEIN_SEND_INTERVAL_MS = 125;
-export const KLEIN_STEPS_MIN = 1;
+// 1 paso no alcanza a limpiar el ruido y devuelve papilla con textos
+// inventados. El mínimo usable es 2, comprobado en cámara.
+export const KLEIN_STEPS_MIN = 2;
 export const KLEIN_STEPS_MAX = 6;
 export const KLEIN_PARAMS = {
   image_size: "square",

@@ -270,7 +270,17 @@ fundido, mapeo 16:9 a cuadrado, estilos) se prueba en Node, sin dependencias:
 node tests/run-tests.mjs
 ```
 
-Lo visual se prueba a mano en el navegador, empezando por `?demo`.
+Y una pasada de QA sobre la app entera en un navegador de verdad, que cubre lo
+que solo se ve ejecutando (arranque limpio, las nueve teclas, las barritas, el
+reset, la grabación, y que sin clave no se llame a la API):
+
+```bash
+python3 -m http.server 8125 &
+node tests/qa-navegador.mjs
+```
+
+Lo único que ninguna de las dos puede cubrir es la salida de los modelos: para
+eso hacen falta una clave de fal y una cámara.
 
 ## Referencias
 

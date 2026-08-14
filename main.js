@@ -19,7 +19,7 @@ import {
   resizeCanvasToVideo,
   FpsMeter,
 } from "./composite.js";
-import { BackendManager } from "./backends.js";
+import { BackendManager, KLEIN_PARAMS } from "./backends.js";
 import { STYLES, DEFAULT_STYLE_ID, findStyle, backendFor, promptFor } from "./styles.js";
 import { createHandLandmarker, CAMERA_CONSTRAINTS } from "./hands.js";
 import { DEMO, makeDemoStream, makeFakeHands } from "./demo.js";
@@ -75,6 +75,17 @@ const ui = createUI({
     );
   },
   onGrabar: () => grabadora.toggle(),
+  // Las barritas se pueden dejar en una combinación que devuelve papilla, y
+  // desde dentro no hay forma de saber cuál fue. Esto siempre vuelve a casa.
+  onReset: () => {
+    const pasos = backends.setSteps(KLEIN_PARAMS.num_inference_steps);
+    const arrastre = backends.setFeedback(KLEIN_PARAMS.output_feedback_strength);
+    localStorage.setItem("fal-klein-steps", String(pasos));
+    localStorage.setItem("fal-klein-feedback", String(arrastre));
+    ui.setSteps(pasos);
+    ui.setArrastre(arrastre);
+    ui.toast(`Ajustes de fábrica: transformación ${pasos}, arrastre ${arrastre}`, 2200);
+  },
   onPollitos: (on) => ui.toast(on ? "Pollitos encendidos" : "Pollitos apagados", 1400),
   onArrastre: (v) => {
     const n = backends.setFeedback(v);

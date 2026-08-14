@@ -152,6 +152,19 @@
       cursor: pointer;
       margin: 0;
     }
+    #reset-btn {
+      appearance: none;
+      margin-top: 4px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.8);
+      border-radius: 9px;
+      padding: 7px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    #reset-btn:hover { background: var(--pink-soft); }
     #pasos-caja .extremos {
       display: flex;
       justify-content: space-between;
@@ -398,7 +411,20 @@
       #riel-der { top: 0; bottom: auto; }
       #hud { flex-direction: row; margin-top: 0; }
       #pasos-caja { flex: 0 1 220px; padding: 8px 12px; }
-      #pasos-caja .extremos { display: none; }
+      #reset-btn {
+      appearance: none;
+      margin-top: 4px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.8);
+      border-radius: 9px;
+      padding: 7px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    #reset-btn:hover { background: var(--pink-soft); }
+    #pasos-caja .extremos { display: none; }
       #toolbar button { padding: 7px 10px; font-size: 12px; }
       #toolbar button .badge { display: none; }
       #toast { bottom: 120px; }
@@ -437,6 +463,8 @@
       <label for="arrastre" style="margin-top:6px">Arrastre <span id="arrastre-valor">0.90</span></label>
       <input id="arrastre" type="range" min="0.5" max="1" step="0.05" value="0.9" />
       <div class="extremos"><span>más estable</span><span>te sigue antes</span></div>
+
+      <button id="reset-btn" type="button">Volver a lo que funciona</button>
     </div>
 
     <button id="rec-btn" type="button">
@@ -484,7 +512,7 @@
       </span>
     </label>
     <p class="note">
-      <strong>Versión 2026-08-14 · 02:30</strong> — si esta fecha no cambia
+      <strong>Versión 2026-08-14 · 03:05</strong> — si esta fecha no cambia
       después de recargar, tu navegador te está sirviendo una copia vieja:
       recarga con Cmd+Shift+R.
     </p>

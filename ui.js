@@ -62,7 +62,7 @@ function esCampoDeTexto(el) {
   return !["range", "checkbox", "radio", "button"].includes(el.type);
 }
 
-export function createUI({ onStyle, onSettings, onEconomy, onSteps, onArrastre, onGrabar, onPollitos, styleId, settings }) {
+export function createUI({ onStyle, onSettings, onEconomy, onSteps, onArrastre, onGrabar, onPollitos, onReset, styleId, settings }) {
   const el = (id) => document.getElementById(id);
   const toolbar = el("toolbar");
   const panel = el("key-panel");
@@ -174,6 +174,8 @@ export function createUI({ onStyle, onSettings, onEconomy, onSteps, onArrastre, 
       1600
     );
   }
+
+  el("reset-btn").addEventListener("click", () => onReset());
 
   // La bandada de pollitos, encendida salvo que se apague con la P.
   let pollitos = true;

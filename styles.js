@@ -104,8 +104,8 @@ export const STYLES = [
       "Turn this into a cartoon portrait of THIS EXACT PERSON: same face, " +
       "same hair, same clothes, same pose. Only the drawing style changes. " +
       "Bold dark brown outlines, flat cel shading, smooth skin, bright " +
-      "expressive eyes, soft blush, flattering. Plain bubblegum pink " +
-      "background, nothing else in the scene.",
+      "expressive eyes, soft blush, flattering. Simple flat bubblegum " +
+      "pink background behind them.",
     // El respaldo local se tiñe de rosa con una mezcla, no con un giro de
     // tono: así sale rosa pase lo que pase delante de la cámara.
     filter: "saturate(0.3) brightness(1.2) contrast(1.05)",
@@ -123,8 +123,8 @@ export const STYLES = [
     prompt:
       "Turn this into a 3D cartoon portrait of THIS EXACT PERSON: same face, " +
       "same hair, same clothes, same pose. Soft rounded 3D shading, big " +
-      "glossy eyes, smooth skin, warm light, flattering. Plain bubblegum " +
-      "pink background, nothing else in the scene.",
+      "glossy eyes, smooth skin, warm light, flattering. Simple flat " +
+      "bubblegum pink background behind them.",
     filter: "saturate(0.45) brightness(1.16) contrast(1.06)",
     tint: { color: "#ffcf3d", mode: "color", alpha: 0.55 },
   },

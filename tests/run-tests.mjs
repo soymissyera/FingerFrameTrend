@@ -422,7 +422,7 @@ test("el fondo va liso: pedir pollitos hacía que el modelo la descartara", () =
   for (const id of ["pollito", "pollito-3d"]) {
     const p = findStyle(id).prompt.toLowerCase();
     assert.ok(!p.includes("chick"), `${id} vuelve a pedir pollitos al modelo`);
-    assert.ok(p.includes("nothing else in the scene"), `${id} debe pedir fondo limpio`);
+    assert.ok(p.includes("simple flat bubblegum"), `${id} debe pedir fondo liso`);
   }
 });
 

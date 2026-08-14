@@ -176,6 +176,22 @@ generando, pantalla completa, V, ajusta el zoom con + y −, pulsa O, espera a
 que se vaya el aviso, y recién ahí graba la pantalla (en Mac, Cmd+Shift+5,
 grabando solo la porción vertical rosa).
 
+## El prompt se edita desde la propia página
+
+En el panel de la llave, bajo **Prompt del estilo activo**, está el texto que
+se le manda al modelo ahora mismo. Se edita ahí y se aplica al instante, sin
+desplegar nada, y se guarda por estilo en el navegador. «Restaurar el de
+fábrica» deshace.
+
+Esto existe por una razón concreta: quien mira la cámara ve el resultado y
+quien escribe el código no. Afinar un prompt a ciegas, con un despliegue de por
+medio en cada intento, es lentísimo y sale mal. Así el ajuste fino lo hace
+quien puede verlo.
+
+También sirve para saber qué versión tienes cargada: si el texto del cuadro no
+coincide con el del repositorio, tu navegador te está sirviendo una copia
+vieja.
+
 ## Tu clave de fal
 
 Saca una clave en [fal.ai/dashboard/keys](https://fal.ai/dashboard/keys) y

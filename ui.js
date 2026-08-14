@@ -11,6 +11,7 @@ const CUSTOM_PROMPT_STORAGE = "fal-custom-prompt";
 const CUSTOM_BACKEND_STORAGE = "fal-custom-backend";
 const STYLE_STORAGE = "fft-style";
 const ECONOMY_STORAGE = "fal-economy";
+const PROMPTS_STORAGE = "fal-prompts";
 
 export function loadSettings() {
   return {
@@ -22,7 +23,21 @@ export function loadSettings() {
     customPrompt: localStorage.getItem(CUSTOM_PROMPT_STORAGE) || "",
     customBackend: localStorage.getItem(CUSTOM_BACKEND_STORAGE) || "klein",
     styleId: localStorage.getItem(STYLE_STORAGE) || "",
+    // Prompts que la usuaria haya reescrito, por estilo.
+    overrides: leerPrompts(),
   };
+}
+
+function leerPrompts() {
+  try {
+    return JSON.parse(localStorage.getItem(PROMPTS_STORAGE) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+export function persistPrompts(overrides) {
+  localStorage.setItem(PROMPTS_STORAGE, JSON.stringify(overrides));
 }
 
 export function persistKey(apiKey, remember) {
@@ -62,7 +77,7 @@ function esCampoDeTexto(el) {
   return !["range", "checkbox", "radio", "button"].includes(el.type);
 }
 
-export function createUI({ onStyle, onSettings, onEconomy, onSteps, onArrastre, onGrabar, onPollitos, onReset, styleId, settings }) {
+export function createUI({ onStyle, onPromptMostrar = () => {}, onSettings, onEconomy, onSteps, onArrastre, onGrabar, onPollitos, onReset, onPrompt, styleId, settings }) {
   const el = (id) => document.getElementById(id);
   const toolbar = el("toolbar");
   const panel = el("key-panel");
@@ -177,6 +192,19 @@ export function createUI({ onStyle, onSettings, onEconomy, onSteps, onArrastre, 
 
   el("reset-btn").addEventListener("click", () => onReset());
 
+  // Editor del prompt del estilo activo. Se aplica al escribir, con un
+  // respiro para no reconectar el backend en cada tecla.
+  const promptBox = el("prompt-activo");
+  let promptTimer = null;
+  promptBox.addEventListener("input", () => {
+    clearTimeout(promptTimer);
+    promptTimer = setTimeout(() => onPrompt(current, promptBox.value), 400);
+  });
+  el("prompt-restaurar").addEventListener("click", () => {
+    clearTimeout(promptTimer);
+    onPrompt(current, null);
+  });
+
   // La bandada de pollitos, encendida salvo que se apague con la P.
   let pollitos = true;
 
@@ -204,6 +232,7 @@ export function createUI({ onStyle, onSettings, onEconomy, onSteps, onArrastre, 
       b.classList.toggle("active", b.dataset.id === id);
     });
     persistStyle(id);
+    onPromptMostrar(id);
     // El estilo libre sin prompt no puede hacer nada: abrir el panel.
     if (id === "custom" && !customPrompt.value.trim()) {
       panel.classList.remove("hidden");
@@ -289,6 +318,10 @@ export function createUI({ onStyle, onSettings, onEconomy, onSteps, onArrastre, 
     },
     openKeyPanel() {
       panel.classList.remove("hidden");
+    },
+    /** Enseña en el cuadro el prompt que se está usando de verdad. */
+    setPrompt(texto) {
+      if (document.activeElement !== promptBox) promptBox.value = texto;
     },
     /** Refleja el valor ya aplicado por el backend. */
     setSteps(n) {

@@ -311,6 +311,8 @@
       padding: 9px 0; font-size: 13px; font-weight: 700; cursor: pointer;
     }
     #key-save { background: var(--pink); color: var(--on-pink); }
+    #prompt-restaurar { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.82); }
+    #prompt-activo { font-size: 12px; line-height: 1.5; }
     #key-clear { background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.82); }
     .note { font-size: 11.5px; color: rgba(255, 255, 255, 0.45); line-height: 1.5; margin-bottom: 0 !important; }
 
@@ -512,9 +514,10 @@
       </span>
     </label>
     <p class="note">
-      <strong>Versión 2026-08-14 · 04:10</strong> — si esta fecha no cambia
-      después de recargar, tu navegador te está sirviendo una copia vieja:
-      recarga con Cmd+Shift+R.
+      <strong>Versión 12.</strong> Si al recargar no cambia este número, tu
+      navegador te está sirviendo una copia vieja: recarga con Cmd+Shift+R. El
+      cuadro de arriba enseña el prompt que se está usando de verdad, que es la
+      forma segura de saber qué versión tienes.
     </p>
     <p class="note">
       Precios de fal a 13 de agosto de 2026: Lucy cuesta $0.04 por segundo
@@ -547,6 +550,17 @@
       pantalla completa antes, así el video sale con la mayor resolución
       posible. Las dos teclas se combinan.
     </p>
+
+    <h3>Prompt del estilo activo</h3>
+    <p>
+      Esto es lo que se le manda al modelo ahora mismo. Edítalo y se aplica al
+      instante, sin esperar a nada: tú ves el resultado en tu cámara y puedes
+      afinarlo sin que yo despliegue nada. Se guarda por estilo.
+    </p>
+    <textarea id="prompt-activo" rows="6" spellcheck="false"></textarea>
+    <div class="row">
+      <button id="prompt-restaurar" type="button">Restaurar el de fábrica</button>
+    </div>
 
     <h3>Estilo personalizado</h3>
     <textarea id="style-custom" rows="3"

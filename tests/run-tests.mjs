@@ -462,6 +462,19 @@ test("el 7 y el 8 se diferencian en el acabado, plano contra volumen", () => {
   assert.ok(volumen.includes("3d") && !volumen.includes("cel-shaded"));
 });
 
+test("lo que ella escribe manda sobre el prompt de fábrica", () => {
+  const pollito = findStyle("pollito");
+  const suyo = "Turn this into a cartoon, dark red hair, never green.";
+  assert.equal(promptFor(pollito, { overrides: { pollito: suyo } }), suyo);
+  // Solo afecta al estilo que tocó, no a los demás.
+  assert.equal(promptFor(findStyle("anime"), { overrides: { pollito: suyo } }), findStyle("anime").prompt);
+  // Vacío o en blanco no cuenta como override: vuelve el de fábrica.
+  assert.equal(promptFor(pollito, { overrides: { pollito: "   " } }), pollito.prompt);
+  assert.equal(promptFor(pollito, { overrides: {} }), pollito.prompt);
+  // Y se le quitan los espacios de los bordes.
+  assert.equal(promptFor(pollito, { overrides: { pollito: "  hola  " } }), "hola");
+});
+
 test("el estilo personalizado hereda backend y prompt del panel", () => {
   const custom = findStyle("custom");
   assert.equal(backendFor(custom, "lucy"), "lucy");

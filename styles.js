@@ -156,8 +156,16 @@ export function backendFor(style, customBackend = "klein") {
   return style.backend ?? customBackend;
 }
 
-/** Prompt efectivo. El personalizado cae a un texto sensato si está vacío. */
-export function promptFor(style, { customPrompt = "", customBackend = "klein" } = {}) {
+/**
+ * Prompt efectivo de un estilo.
+ *
+ * Manda siempre lo que la usuaria haya escrito para ese estilo (`overrides`):
+ * ella ve el resultado en su cámara y yo no, así que su última palabra pesa
+ * más que la mía. Si no ha tocado nada, va el prompt de fábrica.
+ */
+export function promptFor(style, { customPrompt = "", customBackend = "klein", overrides = {} } = {}) {
+  const propio = overrides[style.id];
+  if (propio && propio.trim()) return propio.trim();
   if (style.prompt) return style.prompt;
   if (customPrompt.trim()) return customPrompt.trim();
   return customBackend === "lucy"

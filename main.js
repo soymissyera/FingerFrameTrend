@@ -23,7 +23,7 @@ import { BackendManager, KLEIN_PARAMS } from "./backends.js";
 import { STYLES, DEFAULT_STYLE_ID, findStyle, backendFor, promptFor } from "./styles.js";
 import { createHandLandmarker, CAMERA_CONSTRAINTS } from "./hands.js";
 import { DEMO, makeDemoStream, makeFakeHands } from "./demo.js";
-import { createUI, loadSettings } from "./ui.js";
+import { createUI, loadSettings, persistPrompts } from "./ui.js";
 import { Grabadora } from "./grabacion.js";
 import { Bandada } from "./pollitos.js";
 
@@ -75,6 +75,17 @@ const ui = createUI({
     );
   },
   onGrabar: () => grabadora.toggle(),
+  // El prompt del estilo activo lo manda ella: ve el resultado en su cámara y
+  // yo no. null restaura el de fábrica.
+  onPrompt: (id, texto) => {
+    if (texto === null) delete settings.overrides[id];
+    else settings.overrides[id] = texto;
+    persistPrompts(settings.overrides);
+    ui.setPrompt(promptFor(findStyle(id), settings));
+    syncBackend();
+    if (texto === null) ui.toast("Prompt de fábrica restaurado", 1800);
+  },
+  onPromptMostrar: (id) => ui.setPrompt(promptFor(findStyle(id), settings)),
   // Las barritas se pueden dejar en una combinación que devuelve papilla, y
   // desde dentro no hay forma de saber cuál fue. Esto siempre vuelve a casa.
   onReset: () => {
@@ -140,6 +151,7 @@ const grabadora = new Grabadora({
 
 // La barrita arranca mostrando lo que de verdad tiene el backend.
 ui.setSteps(backends.kleinSteps);
+ui.setPrompt(promptFor(currentStyle(), settings));
 ui.setArrastre(backends.kleinFeedback);
 
 function currentStyle() {

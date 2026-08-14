@@ -12,7 +12,7 @@
 // La geometría y las gracias son lógica pura y se prueban en Node; el dibujo
 // recibe siempre el contexto 2D.
 
-export const SPRITE_URL = "./pollito-miss-yera.jpg";
+export const SPRITE_URL = "./pollito-miss-yera.jpg?v=15";
 
 /**
  * Punto dentro del cuadrilátero en coordenadas locales (u, v) de 0 a 1.

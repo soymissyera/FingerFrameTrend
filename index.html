@@ -527,7 +527,7 @@
       </span>
     </label>
     <p class="note">
-      <strong>Versión 14.</strong> Si al recargar no cambia este número, tu
+      <strong>Versión 15.</strong> Si al recargar no cambia este número, tu
       navegador te está sirviendo una copia vieja: recarga con Cmd+Shift+R. El
       cuadro de arriba enseña el prompt que se está usando de verdad, que es la
       forma segura de saber qué versión tienes.
@@ -601,6 +601,26 @@
     </p>
   </div>
 
-  <script type="module" src="./main.js"></script>
+  <!-- Cada archivo se cachea por separado, así que el navegador puede servir un
+       index.html nuevo con un styles.js viejo: la página parece actualizada y
+       los prompts son los de ayer. El mapa de importaciones le pone versión a
+       todos los módulos de golpe, y basta con subir este número al publicar. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "./main.js": "./main.js?v=15",
+      "./styles.js": "./styles.js?v=15",
+      "./tracking.js": "./tracking.js?v=15",
+      "./composite.js": "./composite.js?v=15",
+      "./backends.js": "./backends.js?v=15",
+      "./hands.js": "./hands.js?v=15",
+      "./demo.js": "./demo.js?v=15",
+      "./ui.js": "./ui.js?v=15",
+      "./grabacion.js": "./grabacion.js?v=15",
+      "./pollitos.js": "./pollitos.js?v=15"
+    }
+  }
+  </script>
+  <script type="module" src="./main.js?v=15"></script>
 </body>
 </html>

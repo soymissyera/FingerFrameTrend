@@ -289,6 +289,18 @@ Tres capas independientes sincronizadas en un solo `requestAnimationFrame`:
    solo a través del cuadrilátero con un `clip()` del canvas, con contorno
    punteado animado y puntos pulsantes en las esquinas.
 
+## Publicar
+
+`index.html` lleva un mapa de importaciones que le añade `?v=N` a todos los
+módulos. **Al publicar un cambio hay que subir ese número**, y el de la
+etiqueta «Versión N» del panel, que es el mismo.
+
+No es opcional: el navegador cachea cada archivo por separado y sin eso sirve
+un `index.html` nuevo con un `styles.js` viejo. La página parece actualizada,
+los prompts son los de ayer y desde fuera parece que los despliegues no
+llegan. `tests/qa-cache.mjs` comprueba que no se quede ningún módulo sin
+versionar.
+
 ## Pruebas
 
 La lógica pura (orden de esquinas, histéresis, rechazo de saltos, suavizado,

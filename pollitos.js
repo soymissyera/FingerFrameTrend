@@ -42,11 +42,27 @@ export function quadScale(quad) {
  * ancha y baja, y escalando por el lado corto los pollitos quedaban diminutos.
  * El tope evita que se coman una franja muy estrecha.
  */
-export function tamanoPollito(quad, factor = 0.22) {
+export function tamanoPollito(quad, factor = 0.17) {
   const [tl, tr, br, bl] = quad;
   const ancho = (Math.hypot(tr.x - tl.x, tr.y - tl.y) + Math.hypot(br.x - bl.x, br.y - bl.y)) / 2;
   const alto = (Math.hypot(bl.x - tl.x, bl.y - tl.y) + Math.hypot(br.x - tr.x, br.y - tr.y)) / 2;
   return Math.min(Math.sqrt(ancho * alto) * factor, alto * 0.5);
+}
+
+// Los pollitos viven en los BORDES del marco, nunca en el centro. En el
+// centro está la persona, y un pollito ahí no se lee como decorado del fondo
+// sino como una pegatina encima de la cara.
+export const ZONA_LIBRE = 0.3; // fracción central reservada a la persona
+
+/** Empuja una posición horizontal fuera de la franja central. */
+export function alBorde(u) {
+  const medio = 0.5;
+  const radio = ZONA_LIBRE / 2;
+  if (u >= medio - radio && u <= medio + radio) {
+    // Al borde más cercano, conservando de qué lado venía.
+    return u < medio ? medio - radio : medio + radio;
+  }
+  return u;
 }
 
 /** Pseudoaleatorio con semilla: las pruebas necesitan repetibilidad. */
@@ -132,8 +148,9 @@ const TAU = Math.PI * 2;
 export class Pollito {
   constructor(random) {
     this.random = random;
-    this.u = 0.2 + random() * 0.6;
-    this.v = 0.6 + random() * 0.3;
+    // Repartidos entre el borde izquierdo y el derecho, nunca en el centro.
+    this.u = random() < 0.5 ? 0.08 + random() * 0.12 : 0.8 + random() * 0.12;
+    this.v = 0.62 + random() * 0.3;
     this.escala = 0.85 + random() * 0.45;
     this.mirandoIzquierda = random() < 0.5;
     this.inicio = 0;
@@ -151,13 +168,15 @@ export class Pollito {
       1.6 + this.random() * 1.6;
     this.mirandoIzquierda = this.random() < 0.5;
     if (this.gracia === "pasea" || this.gracia === "voltereta") {
-      this.uDesde = this.mirandoIzquierda ? 0.88 : 0.12;
-      this.uHasta = this.mirandoIzquierda ? 0.12 : 0.88;
-      this.v = 0.62 + this.random() * 0.26;
+      // Pasean por su lado del marco, sin cruzar por delante de la persona.
+      const derecha = this.mirandoIzquierda ? false : this.random() < 0.5;
+      this.uDesde = derecha ? 0.72 : 0.28;
+      this.uHasta = derecha ? 0.95 : 0.05;
+      this.v = 0.64 + this.random() * 0.26;
     }
     if (this.gracia === "asoma") {
       this.v = 1.12; // empieza fuera, por debajo del borde
-      this.u = 0.15 + this.random() * 0.7;
+      this.u = this.random() < 0.5 ? 0.08 + this.random() * 0.14 : 0.78 + this.random() * 0.14;
     }
   }
 
@@ -205,7 +224,7 @@ export class Pollito {
         break;
       }
     }
-    this.u = Math.min(0.93, Math.max(0.07, this.u));
+    this.u = alBorde(Math.min(0.95, Math.max(0.05, this.u)));
     return this;
   }
 }
@@ -237,7 +256,7 @@ export class Bandada {
     return this;
   }
 
-  draw(ctx, quad, { presence = 1, tamano = 0.22 } = {}) {
+  draw(ctx, quad, { presence = 1, tamano = 0.17 } = {}) {
     if (!this.sprite) return; // aún cargando: no dibujar nada
     const base = tamanoPollito(quad, tamano);
     const relacion = this.sprite.height / this.sprite.width;

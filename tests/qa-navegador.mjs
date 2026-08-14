@@ -42,9 +42,19 @@ console.log("\nBarritas y reset");
 await p.locator("#pasos").fill("6"); await p.waitForTimeout(150);
 await p.locator("#arrastre").fill("0.5"); await p.waitForTimeout(150);
 ok("las barritas se mueven", await p.evaluate(()=>document.getElementById("pasos-valor").textContent==="6"&&document.getElementById("arrastre-valor").textContent==="0.50"));
+// Los valores de fábrica se leen del módulo, no se fijan a mano: si cambian,
+// la QA sigue comprobando lo correcto en vez de fallar por estar vieja.
+const fabrica = await p.evaluate(async () => {
+  const { KLEIN_PARAMS } = await import("./backends.js");
+  return { pasos: KLEIN_PARAMS.num_inference_steps, arrastre: KLEIN_PARAMS.output_feedback_strength };
+});
 await p.click("#reset-btn"); await p.waitForTimeout(300);
-ok("el reset devuelve a 3 y 0.90", await p.evaluate(()=>document.getElementById("pasos-valor").textContent==="3"&&document.getElementById("arrastre-valor").textContent==="0.90"));
-ok("y lo guarda", await p.evaluate(()=>localStorage.getItem("fal-klein-steps")==="3"&&localStorage.getItem("fal-klein-feedback")==="0.9"));
+ok(`el reset devuelve a ${fabrica.pasos} y ${fabrica.arrastre}`, await p.evaluate((f)=>
+  document.getElementById("pasos-valor").textContent===String(f.pasos) &&
+  Number(document.getElementById("arrastre-valor").textContent)===f.arrastre, fabrica));
+ok("y lo guarda", await p.evaluate((f)=>
+  localStorage.getItem("fal-klein-steps")===String(f.pasos) &&
+  Number(localStorage.getItem("fal-klein-feedback"))===f.arrastre, fabrica));
 await p.keyboard.press(","); await p.keyboard.press(","); await p.keyboard.press(","); await p.waitForTimeout(250);
 ok("la transformación no baja de 2", await p.evaluate(()=>document.getElementById("pasos-valor").textContent==="2"), await p.textContent("#pasos-valor"));
 

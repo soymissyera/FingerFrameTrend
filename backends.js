@@ -34,7 +34,10 @@ export const KLEIN_STEPS_MIN = 2;
 export const KLEIN_STEPS_MAX = 6;
 export const KLEIN_PARAMS = {
   image_size: "square",
-  num_inference_steps: 3,
+  // 2 y no 3: lo que más pesa es que respete a la persona, y cuantos menos
+  // pasos, menos se aleja de la imagen que entra por la cámara. Con la
+  // barrita se sube si se quiere más estilo.
+  num_inference_steps: 2,
   seed: 35,
   output_feedback_strength: 0.9,
   schedule_mu: 2.3,

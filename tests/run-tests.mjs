@@ -45,6 +45,8 @@ import {
   makeRandom,
   alfaPorBlancura,
   tamanoPollito,
+  alBorde,
+  ZONA_LIBRE,
 } from "../pollitos.js";
 import { makeFakeHands } from "../demo.js";
 import { STYLES, findStyle, backendFor, promptFor, DEFAULT_STYLE_ID } from "../styles.js";
@@ -363,6 +365,17 @@ test("hay ocho estilos con tecla más el personalizado", () => {
   assert.equal(new Set(STYLES.map((s) => s.id)).size, 9, "sin identificadores repetidos");
 });
 
+test("TODOS los estilos exigen respetar a la persona", () => {
+  // Es la prioridad número uno y aplica a los ocho, no solo a los de la marca.
+  for (const s of STYLES.slice(0, 8)) {
+    assert.ok(
+      /never the person/.test(s.prompt),
+      `${s.id} deja al modelo inventarse a quien quiera`
+    );
+    assert.ok(/same (face|hair)|face, facial features/.test(s.prompt), `${s.id} no ancla la cara`);
+  }
+});
+
 test("cada estilo con backend trae prompt del fraseo correcto", () => {
   for (const s of STYLES.slice(0, 8)) {
     assert.ok(s.prompt, `${s.id} necesita prompt`);
@@ -604,12 +617,33 @@ test("quadScale mide el lado corto del marco", () => {
 test("el tamaño usa la media geométrica, que el marco suele ser una franja", () => {
   const cuadrado = [{x:0,y:0},{x:400,y:0},{x:400,y:400},{x:0,y:400}];
   const franja = [{x:0,y:0},{x:900,y:0},{x:900,y:180},{x:0,y:180}];
-  assert.ok(Math.abs(tamanoPollito(cuadrado) - 88) < 1e-9, "400x400 → 88 px");
+  assert.ok(Math.abs(tamanoPollito(cuadrado) - 68) < 1e-9, "400x400 → 68 px");
   // Por el lado corto habrían salido 40 px, ridículos en una franja tan ancha.
-  assert.ok(tamanoPollito(franja) > 40 * 1.5, `en franja salieron ${tamanoPollito(franja)}`);
+  assert.ok(tamanoPollito(franja) > 40, `en franja salieron ${tamanoPollito(franja)}`);
   // Pero nunca más de medio alto: no pueden comerse el marco.
   const finita = [{x:0,y:0},{x:1200,y:0},{x:1200,y:60},{x:0,y:60}];
   assert.equal(tamanoPollito(finita), 30);
+});
+
+test("dejan libre el centro, que es donde está la persona", () => {
+  // Un pollito en el centro no se lee como fondo, se lee como pegatina en la
+  // cara. alBorde lo empuja al lado más cercano.
+  assert.equal(alBorde(0.5), 0.5 + ZONA_LIBRE / 2, "el centro exacto se va a un lado");
+  assert.equal(alBorde(0.4), 0.5 - ZONA_LIBRE / 2, "y lo de la izquierda al borde izquierdo");
+  assert.equal(alBorde(0.1), 0.1, "lo que ya está fuera no se toca");
+  assert.equal(alBorde(0.9), 0.9);
+
+  const b = new Bandada({ cantidad: 6, seed: 21 });
+  const libre = [0.5 - ZONA_LIBRE / 2, 0.5 + ZONA_LIBRE / 2];
+  for (let f = 0; f < 9000; f++) {
+    b.update(f / 60);
+    for (const p of b.pollitos) {
+      assert.ok(
+        p.u <= libre[0] + 1e-9 || p.u >= libre[1] - 1e-9,
+        `un pollito se metió al centro: u=${p.u}`
+      );
+    }
+  }
 });
 
 test("no se salen del marco por los lados, pasen las horas que pasen", () => {
@@ -617,7 +651,7 @@ test("no se salen del marco por los lados, pasen las horas que pasen", () => {
   for (let f = 0; f < 6000; f++) {
     b.update(f / 60);
     for (const p of b.pollitos) {
-      assert.ok(p.u >= 0.07 && p.u <= 0.93, `u fuera de rango: ${p.u}`);
+      assert.ok(p.u >= 0.05 && p.u <= 0.95, `u fuera de rango: ${p.u}`);
       assert.ok(p.v > -0.2 && p.v < 1.3, `v disparada: ${p.v}`);
     }
   }

@@ -16,6 +16,17 @@
 // `filter` es el filtro CSS del modo local (sin clave de fal): cada estilo
 // tiene su propio color para poder probar tracking y compositing gratis.
 
+// Lo que más pesa, en todos los filtros sin excepción: la persona se respeta.
+// Antes solo lo pedían los dos estilos de la marca, y los demás dejaban al
+// modelo inventarse a quien le diera la gana. Va al final de la frase y en
+// mayúsculas porque es la orden que no se puede perder.
+const IDENTIDAD_KLEIN =
+  " Keep THIS EXACT PERSON: same face, same facial features, same expression, " +
+  "same hair, same clothes, same pose. Only the art style changes, never the person.";
+const IDENTIDAD_LUCY =
+  " Keep the person's face, facial features, expression, hair and clothes " +
+  "exactly as they are. Only the art style changes, never the person.";
+
 export const STYLES = [
   {
     id: "anime",
@@ -24,7 +35,7 @@ export const STYLES = [
     prompt:
       "Change the style of the video to hand-drawn anime: clean black line " +
       "art, flat cel shading, vibrant saturated colors, large expressive " +
-      "eyes, soft painted anime background.",
+      "eyes, soft painted anime background." + IDENTIDAD_LUCY,
     filter: "saturate(1.8) contrast(1.25) brightness(1.05)",
   },
   {
@@ -34,7 +45,7 @@ export const STYLES = [
     prompt:
       "Change the style of the video to neon cyberpunk: glowing magenta and " +
       "cyan neon light on the person and the walls, rain-slick reflective " +
-      "surfaces, holographic signs in the background, deep night tones.",
+      "surfaces, holographic signs in the background, deep night tones." + IDENTIDAD_LUCY,
     filter: "hue-rotate(195deg) saturate(2) contrast(1.2)",
   },
   {
@@ -44,7 +55,7 @@ export const STYLES = [
     prompt:
       "Change the style of the video to a 3D animated movie: stylized CGI " +
       "animation, the person as an animated character with expressive big " +
-      "eyes and smooth skin, soft cinematic lighting, shallow depth of field.",
+      "eyes and smooth skin, soft cinematic lighting, shallow depth of field." + IDENTIDAD_LUCY,
     filter: "saturate(1.35) contrast(1.15) brightness(1.08)",
   },
   {
@@ -53,7 +64,7 @@ export const STYLES = [
     backend: "klein",
     prompt:
       "Turn this into a living oil painting: thick visible brushstrokes, " +
-      "melting gold and sapphire pigments, impasto texture, museum canvas.",
+      "melting gold and sapphire pigments, impasto texture, museum canvas." + IDENTIDAD_KLEIN,
     filter: "sepia(0.35) saturate(1.7) contrast(1.15)",
   },
   {
@@ -63,7 +74,7 @@ export const STYLES = [
     prompt:
       "Turn this into a surreal ethereal dreamworld: floating islands, " +
       "bioluminescent plants, an aurora sky, soft glowing mist, weightless " +
-      "particles of light.",
+      "particles of light." + IDENTIDAD_KLEIN,
     filter: "hue-rotate(230deg) saturate(1.6) brightness(1.12)",
   },
   {
@@ -73,7 +84,7 @@ export const STYLES = [
     prompt:
       "Turn this into a loose ink and watercolor sketch on textured paper, " +
       "expressive black linework, visible pen hatching, splashes of vivid " +
-      "color bleeding outside the lines.",
+      "color bleeding outside the lines." + IDENTIDAD_KLEIN,
     filter: "grayscale(0.85) contrast(1.7) brightness(1.12)",
   },
   {
@@ -105,7 +116,7 @@ export const STYLES = [
       "same hair, same clothes, same pose. Only the drawing style changes. " +
       "Bold dark brown outlines, flat cel shading, smooth skin, bright " +
       "expressive eyes, soft blush, flattering. Simple flat bubblegum " +
-      "pink background behind them.",
+      "pink background behind them." + IDENTIDAD_KLEIN,
     // El respaldo local se tiñe de rosa con una mezcla, no con un giro de
     // tono: así sale rosa pase lo que pase delante de la cámara.
     filter: "saturate(0.3) brightness(1.2) contrast(1.05)",
@@ -124,7 +135,7 @@ export const STYLES = [
       "Turn this into a 3D cartoon portrait of THIS EXACT PERSON: same face, " +
       "same hair, same clothes, same pose. Soft rounded 3D shading, big " +
       "glossy eyes, smooth skin, warm light, flattering. Simple flat " +
-      "bubblegum pink background behind them.",
+      "bubblegum pink background behind them." + IDENTIDAD_KLEIN,
     filter: "saturate(0.45) brightness(1.16) contrast(1.06)",
     tint: { color: "#ffcf3d", mode: "color", alpha: 0.55 },
   },

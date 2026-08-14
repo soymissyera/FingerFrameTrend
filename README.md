@@ -50,6 +50,11 @@ pantalla, así que el marco sigue tus dedos con latencia cero aunque el modelo
 vaya más lento. Los modelos ni siquiera saben que existen los dedos: reciben
 el encuadre completo y el recorte es 100% local.
 
+La prioridad número uno, en los ocho estilos: **la persona se respeta**. Cada
+prompt termina con la misma orden («Keep THIS EXACT PERSON… only the art style
+changes, never the person») y hay una prueba que falla si algún estilo se la
+deja. Lo que cambia entre filtros es el trazo, nunca quién está delante.
+
 ## Estilos
 
 | Tecla | Estilo | Modelo |
@@ -82,7 +87,9 @@ archivo real de la marca (`pollito-miss-yera.jpg`), encima de la ventana y
 dentro del recorte. Viene en JPEG sobre blanco, así que la app le quita el
 fondo por código antes de usarlo y lo recorta al contorno. Van animados,
 brincan, pasean, se asoman por el borde de abajo, dan volteretas y a veces se
-duermen. Se apagan con la tecla **P**, y no cuestan nada porque no pasan por
+duermen. Viven en los bordes del marco y tienen prohibida la franja central:
+ahí está la persona, y un pollito encima de una cara no se lee como fondo sino
+como pegatina. Se apagan con la tecla **P**, y no cuestan nada porque no pasan por
 ningún modelo.
 
 El fondo del prompt va liso y sin pollitos, y eso costó una prueba en vivo

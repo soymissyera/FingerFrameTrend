@@ -81,11 +81,11 @@ const ui = createUI({
     if (texto === null) delete settings.overrides[id];
     else settings.overrides[id] = texto;
     persistPrompts(settings.overrides);
-    ui.setPrompt(promptFor(findStyle(id), settings));
+    mostrarPrompt(id);
     syncBackend();
     if (texto === null) ui.toast("Prompt de fábrica restaurado", 1800);
   },
-  onPromptMostrar: (id) => ui.setPrompt(promptFor(findStyle(id), settings)),
+  onPromptMostrar: (id) => mostrarPrompt(id),
   // Las barritas se pueden dejar en una combinación que devuelve papilla, y
   // desde dentro no hay forma de saber cuál fue. Esto siempre vuelve a casa.
   onReset: () => {
@@ -151,7 +151,13 @@ const grabadora = new Grabadora({
 
 // La barrita arranca mostrando lo que de verdad tiene el backend.
 ui.setSteps(backends.kleinSteps);
-ui.setPrompt(promptFor(currentStyle(), settings));
+mostrarPrompt(styleId);
+
+/** Refresca el cuadro del prompt y su etiqueta de "esto lo escribiste tú". */
+function mostrarPrompt(id) {
+  const propio = !!(settings.overrides[id] || "").trim();
+  ui.setPrompt(promptFor(findStyle(id), settings), propio);
+}
 ui.setArrastre(backends.kleinFeedback);
 
 function currentStyle() {

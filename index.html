@@ -312,6 +312,19 @@
     }
     #key-save { background: var(--pink); color: var(--on-pink); }
     #prompt-restaurar { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.82); }
+    #prompt-restaurar:disabled { opacity: 0.35; cursor: default; }
+    #prompt-marca {
+      display: none;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--on-pink);
+      background: var(--pink);
+      border-radius: 999px;
+      padding: 2px 7px;
+      vertical-align: 1px;
+    }
+    #prompt-marca.propio { display: inline-block; }
     #prompt-activo { font-size: 12px; line-height: 1.5; }
     #key-clear { background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.82); }
     .note { font-size: 11.5px; color: rgba(255, 255, 255, 0.45); line-height: 1.5; margin-bottom: 0 !important; }
@@ -514,7 +527,7 @@
       </span>
     </label>
     <p class="note">
-      <strong>Versión 13.</strong> Si al recargar no cambia este número, tu
+      <strong>Versión 14.</strong> Si al recargar no cambia este número, tu
       navegador te está sirviendo una copia vieja: recarga con Cmd+Shift+R. El
       cuadro de arriba enseña el prompt que se está usando de verdad, que es la
       forma segura de saber qué versión tienes.
@@ -551,11 +564,13 @@
       posible. Las dos teclas se combinan.
     </p>
 
-    <h3>Prompt del estilo activo</h3>
+    <h3>Prompt del estilo activo <span id="prompt-marca"></span></h3>
     <p>
       Esto es lo que se le manda al modelo ahora mismo. Edítalo y se aplica al
-      instante, sin esperar a nada: tú ves el resultado en tu cámara y puedes
-      afinarlo sin que yo despliegue nada. Se guarda por estilo.
+      instante, sin esperar a nada. Se guarda por estilo, y en cuanto lo tocas
+      <strong>tu texto manda sobre el de fábrica</strong>: si aparece la
+      etiqueta rosa, estás usando tu versión y las mejoras que yo publique no
+      te van a llegar hasta que pulses «Restaurar el de fábrica».
     </p>
     <textarea id="prompt-activo" rows="6" spellcheck="false"></textarea>
     <div class="row">

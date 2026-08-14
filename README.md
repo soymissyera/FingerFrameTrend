@@ -188,6 +188,11 @@ quien escribe el código no. Afinar un prompt a ciegas, con un despliegue de por
 medio en cada intento, es lentísimo y sale mal. Así el ajuste fino lo hace
 quien puede verlo.
 
+Cuando un estilo lleva un prompt escrito por ella aparece la etiqueta **TU
+VERSIÓN** junto al título, y el botón de restaurar se enciende. Sin esa marca,
+un prompt escrito hace horas bloquea en silencio todo lo que se publique
+después, y desde fuera parece que los despliegues no llegan.
+
 También sirve para saber qué versión tienes cargada: si el texto del cuadro no
 coincide con el del repositorio, tu navegador te está sirviendo una copia
 vieja.

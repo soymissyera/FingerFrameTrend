@@ -319,9 +319,16 @@ export function createUI({ onStyle, onPromptMostrar = () => {}, onSettings, onEc
     openKeyPanel() {
       panel.classList.remove("hidden");
     },
-    /** Enseña en el cuadro el prompt que se está usando de verdad. */
-    setPrompt(texto) {
+    /**
+     * Enseña en el cuadro el prompt que se está usando de verdad, y marca si
+     * es el de fábrica o uno escrito por ella. Sin esa marca, un prompt suyo
+     * de hace horas bloquea en silencio todo lo que se publique después.
+     */
+    setPrompt(texto, esPropio = false) {
       if (document.activeElement !== promptBox) promptBox.value = texto;
+      el("prompt-marca").className = esPropio ? "propio" : "";
+      el("prompt-marca").textContent = esPropio ? "TU VERSIÓN" : "";
+      el("prompt-restaurar").disabled = !esPropio;
     },
     /** Refleja el valor ya aplicado por el backend. */
     setSteps(n) {

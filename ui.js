@@ -62,7 +62,7 @@ function esCampoDeTexto(el) {
   return !["range", "checkbox", "radio", "button"].includes(el.type);
 }
 
-export function createUI({ onStyle, onSettings, onEconomy, onSteps, onArrastre, onGrabar, styleId, settings }) {
+export function createUI({ onStyle, onSettings, onEconomy, onSteps, onArrastre, onGrabar, onPollitos, styleId, settings }) {
   const el = (id) => document.getElementById(id);
   const toolbar = el("toolbar");
   const panel = el("key-panel");
@@ -121,6 +121,10 @@ export function createUI({ onStyle, onSettings, onEconomy, onSteps, onArrastre, 
     } else if (key === "r") {
       ev.preventDefault();
       onGrabar();
+    } else if (key === "p") {
+      ev.preventDefault();
+      pollitos = !pollitos;
+      onPollitos(pollitos);
     } else if (ev.key === "," || ev.key === "<") {
       ev.preventDefault();
       onSteps(Number(pasosInput.value) - 1);
@@ -170,6 +174,9 @@ export function createUI({ onStyle, onSettings, onEconomy, onSteps, onArrastre, 
       1600
     );
   }
+
+  // La bandada de pollitos, encendida salvo que se apague con la P.
+  let pollitos = true;
 
   // Grabar: el botón y la tecla R hacen lo mismo.
   const recBtn = el("rec-btn");
@@ -296,6 +303,9 @@ export function createUI({ onStyle, onSettings, onEconomy, onSteps, onArrastre, 
       const m = Math.floor(segundos / 60);
       const s = Math.floor(segundos % 60);
       recTexto.textContent = `Parar · ${m}:${String(s).padStart(2, "0")}`;
+    },
+    get pollitos() {
+      return pollitos;
     },
     /** ¿Está el formato vertical puesto? Lo necesita la grabadora. */
     get vertical() {

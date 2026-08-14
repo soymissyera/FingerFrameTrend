@@ -9,6 +9,8 @@ grabaciones/
 *.png
 *.jpg
 *.jpeg
+# El pollito de la marca sí va al repositorio: es un recurso de la app.
+!pollito-miss-yera.jpg
 # Salvo la media de ejemplo que sí se publica a propósito.
 !examples/**
 

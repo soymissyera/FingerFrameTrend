@@ -67,6 +67,8 @@ el encuadre completo y el recorte es 100% local.
 | V | Formato vertical 9:16 | — |
 | + − | Zoom dentro del marco vertical | — |
 | , . | Cuánto te transforma el modelo, de 1 a 6 (también con la barrita) | — |
+| R | Grabar y parar | — |
+| P | Encender o apagar los pollitos | — |
 
 El **Mundo Pollito** es el estilo propio de la marca. La regla que lo define
 es lo que NO cambia: quien se ponga delante sale siendo quien es, su cara, su
@@ -75,7 +77,16 @@ mayúsculas («THIS EXACT PERSON, same face, same hair») porque sin esa orden e
 modelo se toma libertades y devuelve a otra persona. Detrás, el rosa bubblegum de la marca,
 liso.
 
-El fondo va liso y sin pollitos, y eso costó una prueba en vivo aprenderlo:
+Los pollitos sí salen, pero no los pinta el modelo: se dibujan en local con el
+archivo real de la marca (`pollito-miss-yera.jpg`), encima de la ventana y
+dentro del recorte. Viene en JPEG sobre blanco, así que la app le quita el
+fondo por código antes de usarlo y lo recorta al contorno. Van animados,
+brincan, pasean, se asoman por el borde de abajo, dan volteretas y a veces se
+duermen. Se apagan con la tecla **P**, y no cuestan nada porque no pasan por
+ningún modelo.
+
+El fondo del prompt va liso y sin pollitos, y eso costó una prueba en vivo
+aprenderlo:
 pidiendo «fondo rosa con pollitos», klein montó una maqueta 3D con pollitos de
 plástico y la persona no aparecía por ningún lado. A tres pasos de difusión el
 presupuesto no da para la escena y para quien está delante, así que se gasta

@@ -25,6 +25,7 @@ import { createHandLandmarker, CAMERA_CONSTRAINTS } from "./hands.js";
 import { DEMO, makeDemoStream, makeFakeHands } from "./demo.js";
 import { createUI, loadSettings } from "./ui.js";
 import { Grabadora } from "./grabacion.js";
+import { Bandada } from "./pollitos.js";
 
 const video = document.getElementById("video");
 const lucyVideo = document.getElementById("lucy");
@@ -37,6 +38,9 @@ let styleId =
 
 const tracker = new FrameTracker();
 const renderFps = new FpsMeter();
+// El pollito de la marca, dibujado en local con su archivo real.
+const bandada = new Bandada({ cantidad: 3 });
+void bandada.cargar();
 let landmarker = null;
 let lastVideoTime = -1;
 let lastHands = null;
@@ -71,6 +75,7 @@ const ui = createUI({
     );
   },
   onGrabar: () => grabadora.toggle(),
+  onPollitos: (on) => ui.toast(on ? "Pollitos encendidos" : "Pollitos apagados", 1400),
   onArrastre: (v) => {
     const n = backends.setFeedback(v);
     localStorage.setItem("fal-klein-feedback", String(n));
@@ -246,6 +251,10 @@ function drawWindow(quad, w, h) {
       if (!DEMO && !settings.apiKey) {
         drawQuadMessage(ctx, quad, "Pon tu clave de fal (arriba a la derecha)", w);
       }
+    }
+    // El pollito va encima de todo, dentro de la ventana.
+    if (style.bandada && ui.pollitos) {
+      bandada.update(performance.now() / 1000).draw(ctx, quad, { presence: 1 });
     }
   });
 }

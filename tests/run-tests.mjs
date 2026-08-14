@@ -36,6 +36,16 @@ import {
   nombreArchivo,
   EXPORT_VERTICAL,
 } from "../grabacion.js";
+import {
+  Bandada,
+  Pollito,
+  GRACIAS,
+  quadPoint,
+  quadScale,
+  makeRandom,
+  alfaPorBlancura,
+  tamanoPollito,
+} from "../pollitos.js";
 import { makeFakeHands } from "../demo.js";
 import { STYLES, findStyle, backendFor, promptFor, DEFAULT_STYLE_ID } from "../styles.js";
 
@@ -555,6 +565,97 @@ test("sin clave el ahorro no toca nada", () => {
   advance(9999);
   m.setDemand(false);
   assert.equal(m.kleinPaused, false);
+});
+
+// --------------------------------------------------------------- pollitos
+group("Pollito de la marca");
+
+test("el fondo blanco se va y la tinta se queda", () => {
+  assert.equal(alfaPorBlancura(255, 255, 255), 0, "el blanco puro desaparece");
+  assert.equal(alfaPorBlancura(250, 250, 252), 0, "y el casi blanco del JPEG también");
+  assert.equal(alfaPorBlancura(91, 58, 41), 255, "el contorno marrón se queda entero");
+  assert.equal(alfaPorBlancura(245, 220, 122), 255, "y el amarillo del cuerpo también");
+  // El borde suavizado sale a medio camino, que es lo que evita el dentado.
+  const borde = alfaPorBlancura(238, 238, 238);
+  assert.ok(borde > 0 && borde < 255, `el borde debería ser translúcido, fue ${borde}`);
+});
+
+test("un color claro pero con tono no se confunde con el fondo", () => {
+  // El rosa del moflete es claro; si se fuera, el pollito saldría con agujeros.
+  assert.equal(alfaPorBlancura(255, 142, 203), 255);
+});
+
+test("quadPoint coloca por las esquinas y sigue la deformación del marco", () => {
+  const q = [
+    { x: 0, y: 0 },
+    { x: 100, y: 0 },
+    { x: 80, y: 60 },
+    { x: 20, y: 60 },
+  ];
+  assert.deepEqual(quadPoint(q, 0, 0), { x: 0, y: 0 });
+  assert.deepEqual(quadPoint(q, 1, 1), { x: 80, y: 60 });
+  assert.deepEqual(quadPoint(q, 0.5, 0.5), { x: 50, y: 30 });
+});
+
+test("quadScale mide el lado corto del marco", () => {
+  assert.equal(quadScale([{x:0,y:0},{x:200,y:0},{x:200,y:50},{x:0,y:50}]), 50);
+});
+
+test("el tamaño usa la media geométrica, que el marco suele ser una franja", () => {
+  const cuadrado = [{x:0,y:0},{x:400,y:0},{x:400,y:400},{x:0,y:400}];
+  const franja = [{x:0,y:0},{x:900,y:0},{x:900,y:180},{x:0,y:180}];
+  assert.ok(Math.abs(tamanoPollito(cuadrado) - 88) < 1e-9, "400x400 → 88 px");
+  // Por el lado corto habrían salido 40 px, ridículos en una franja tan ancha.
+  assert.ok(tamanoPollito(franja) > 40 * 1.5, `en franja salieron ${tamanoPollito(franja)}`);
+  // Pero nunca más de medio alto: no pueden comerse el marco.
+  const finita = [{x:0,y:0},{x:1200,y:0},{x:1200,y:60},{x:0,y:60}];
+  assert.equal(tamanoPollito(finita), 30);
+});
+
+test("no se salen del marco por los lados, pasen las horas que pasen", () => {
+  const b = new Bandada({ cantidad: 5, seed: 3 });
+  for (let f = 0; f < 6000; f++) {
+    b.update(f / 60);
+    for (const p of b.pollitos) {
+      assert.ok(p.u >= 0.07 && p.u <= 0.93, `u fuera de rango: ${p.u}`);
+      assert.ok(p.v > -0.2 && p.v < 1.3, `v disparada: ${p.v}`);
+    }
+  }
+});
+
+test("van cambiando de gracia y las usan todas", () => {
+  const b = new Bandada({ cantidad: 5, seed: 11 });
+  const vistas = new Set();
+  for (let f = 0; f < 20000; f++) {
+    b.update(f / 60);
+    for (const p of b.pollitos) vistas.add(p.gracia);
+  }
+  for (const g of GRACIAS) assert.ok(vistas.has(g), `la gracia «${g}» nunca salió`);
+});
+
+test("la voltereta da la vuelta entera y el que asoma entra desde abajo", () => {
+  const v = new Pollito(makeRandom(9));
+  Object.assign(v, { gracia: "voltereta", inicio: 0, duracion: 2, uDesde: 0.8, uHasta: 0.4 });
+  v.update(0.5);
+  assert.equal(v.giro, 0, "primero corre tan campante");
+  v.update(1.99);
+  assert.ok(Math.abs(v.giro) > Math.PI * 1.9, `la vuelta se queda a medias: ${v.giro}`);
+
+  const a = new Pollito(makeRandom(5));
+  Object.assign(a, { gracia: "asoma", inicio: 0, duracion: 2, v: 1.12 });
+  a.update(0.01);
+  assert.ok(a.v > 1, "empieza fuera del borde de abajo");
+  a.update(1.0);
+  assert.ok(a.v < 1, "y a mitad ya se asomó");
+});
+
+test("sin sprite cargado no dibuja nada en vez de reventar", () => {
+  const b = new Bandada({ cantidad: 2, seed: 1 });
+  b.sprite = null;
+  let llamadas = 0;
+  const ctxFalso = new Proxy({}, { get: () => () => llamadas++ });
+  b.update(1).draw(ctxFalso, [{x:0,y:0},{x:10,y:0},{x:10,y:10},{x:0,y:10}]);
+  assert.equal(llamadas, 0);
 });
 
 // ------------------------------------------------------------- grabación

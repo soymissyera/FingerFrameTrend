@@ -99,6 +99,7 @@ export const STYLES = [
     id: "pollito",
     label: "Mundo Pollito",
     backend: "klein",
+    bandada: true,
     prompt:
       "Turn this into a cartoon portrait of THIS EXACT PERSON: same face, " +
       "same hair, same clothes, same pose. Only the drawing style changes. " +
@@ -118,6 +119,7 @@ export const STYLES = [
     id: "pollito-3d",
     label: "Pollito animado",
     backend: "klein",
+    bandada: true,
     prompt:
       "Turn this into a 3D cartoon portrait of THIS EXACT PERSON: same face, " +
       "same hair, same clothes, same pose. Soft rounded 3D shading, big " +

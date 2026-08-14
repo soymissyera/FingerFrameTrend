@@ -10,8 +10,12 @@
 //
 // Lo único que NO puede cubrir es la salida de los modelos: para eso hace
 // falta una clave de fal y una cámara.
+//
+// Necesita Playwright con Chromium instalado (npx playwright install chromium).
 
-import { chromium } from "/opt/node22/lib/node_modules/playwright/index.mjs";
+import { chromium } from "playwright";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args: ["--no-sandbox","--autoplay-policy=no-user-gesture-required"] });
 const ctxB = await b.newContext({ viewport: { width: 1440, height: 900 }, acceptDownloads: true });
 const p = await ctxB.newPage();
@@ -77,7 +81,8 @@ ok("el botón marca que graba", (await p.getAttribute("#rec-btn","class")).inclu
 await p.keyboard.press("r");
 const d = await dl;
 ok("descarga el archivo", !!d.suggestedFilename(), d.suggestedFilename());
-await d.saveAs("/tmp/claude-0/-home-user-FingerFrameTrend/4d31ad51-93f8-5ca9-8c00-f88b79d8852a/scratchpad/qa-" + d.suggestedFilename());
+// A una carpeta temporal del sistema, no a una ruta de nadie en concreto.
+await d.saveAs(join(tmpdir(), "qa-" + d.suggestedFilename()));
 
 console.log("\nPanel y enlaces");
 await p.click("#key-btn"); await p.waitForTimeout(300);

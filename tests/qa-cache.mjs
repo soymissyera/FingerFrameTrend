@@ -9,7 +9,7 @@
 // importaciones de index.html le pone versión a todos los módulos; esto
 // verifica que no se quede ninguno fuera al añadir un archivo nuevo.
 
-import { chromium } from "/opt/node22/lib/node_modules/playwright/index.mjs";
+import { chromium } from "playwright";
 const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args: ["--no-sandbox","--autoplay-policy=no-user-gesture-required"] });
 const p = await b.newPage({ viewport: { width: 1440, height: 940 } });
 const pedidos = [];

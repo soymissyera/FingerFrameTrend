@@ -94,12 +94,11 @@ export const STYLES = [
     // quien es, solo que dibujado, y el pollito es un personaje aparte que
     // acompaña, nunca un disfraz.
     //
-    // El prompt no describe a nadie en concreto, dice "el mismo pelo, la misma
-    // ropa". Describir a la dueña ("melena roja ondulada") tenía dos
-    // problemas: convertía en mujer pelirroja a cualquier otra persona que lo
-    // usara, y peleaba contra el parecido incluso con ella, porque el día que
-    // se recoja el pelo el modelo se lo soltaría igual. "El mismo pelo"
-    // respeta lo que de verdad entra por la cámara.
+    // Este prompt está afinado PARA LA DUEÑA del repositorio, a propósito, y
+    // por eso la describe: melena roja ondulada, ojos marrones grandes. En sus
+    // pruebas es la versión que más se le parece, que es lo único que importa
+    // aquí. Quien clone el repositorio y quiera otra cosa, cambia esta línea
+    // o usa el estilo Personalizado.
     //
     // Es corto a propósito, y sin pollitos en el fondo a propósito también.
     // Con pollitos en el prompt, klein a tres pasos dedica el presupuesto a
@@ -110,15 +109,12 @@ export const STYLES = [
     id: "pollito",
     label: "Mundo Pollito",
     backend: "klein",
-    bandada: true,
     prompt:
-      "Turn this into a cartoon portrait of THIS EXACT PERSON: same face, " +
-      "same hair, same clothes, same pose. Only the drawing style changes. " +
-      "Bold dark brown outlines, flat cel shading, smooth skin, bright " +
-      "expressive eyes, soft blush, flattering. Simple flat bubblegum " +
-      "pink background behind them." + IDENTIDAD_KLEIN,
-    // El respaldo local se tiñe de rosa con una mezcla, no con un giro de
-    // tono: así sale rosa pase lo que pase delante de la cámara.
+      "Turn this into a hand-drawn cartoon version of the same person: keep " +
+      "her face, her long red wavy hair, her clothes and her pose exactly as " +
+      "they are, only redrawn. Bold dark brown outlines, flat cel-shaded " +
+      "colors, big expressive brown eyes with long lashes, soft pink blush, " +
+      "simple flat bubblegum pink background." + IDENTIDAD_KLEIN,
     filter: "saturate(0.3) brightness(1.2) contrast(1.05)",
     tint: { color: "#fb8cd4", mode: "color", alpha: 0.85 },
   },
@@ -130,12 +126,12 @@ export const STYLES = [
     id: "pollito-3d",
     label: "Pollito animado",
     backend: "klein",
-    bandada: true,
     prompt:
-      "Turn this into a 3D cartoon portrait of THIS EXACT PERSON: same face, " +
-      "same hair, same clothes, same pose. Soft rounded 3D shading, big " +
-      "glossy eyes, smooth skin, warm light, flattering. Simple flat " +
-      "bubblegum pink background behind them." + IDENTIDAD_KLEIN,
+      "Turn this into a soft 3D animated movie version of the same person: " +
+      "keep her face, her long red wavy hair, her clothes and her pose " +
+      "exactly as they are, only remade in 3D. Rounded 3D shading, big " +
+      "expressive brown eyes with long lashes, soft pink blush, smooth skin, " +
+      "warm light, simple flat bubblegum pink background." + IDENTIDAD_KLEIN,
     filter: "saturate(0.45) brightness(1.16) contrast(1.06)",
     tint: { color: "#ffcf3d", mode: "color", alpha: 0.55 },
   },

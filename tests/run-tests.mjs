@@ -394,10 +394,10 @@ test("cada estilo con backend trae prompt del fraseo correcto", () => {
 // Lo que comparten los dos estilos de la marca: es ELLA, no una chica
 // cualquiera, sobre el rosa de la marca y con pollitos alrededor.
 const SENAS_POLLITO = [
-  "this exact person",
-  "same face",
-  "same hair",
+  "red wavy hair",
+  "exactly as they are",
   "bubblegum pink",
+  "never the person",
 ];
 
 // Cualquiera tiene que poder usarlo: nada de describir a una persona concreta,
@@ -439,11 +439,18 @@ test("el fondo va liso: pedir pollitos hacía que el modelo la descartara", () =
   }
 });
 
-test("los prompts no describen a nadie: sirven para cualquiera", () => {
+test("los estilos de la marca están afinados para su dueña, y eso es a propósito", () => {
+  // Decisión suya tras probarlo: prefiere que se le parezca a ella antes que
+  // servir para cualquiera. Quien clone el repositorio cambia esta línea.
   for (const id of ["pollito", "pollito-3d"]) {
     const p = findStyle(id).prompt.toLowerCase();
+    assert.ok(p.includes("red wavy hair"), `${id} perdió el pelo de la marca`);
+    assert.ok(p.includes("exactly as they are"), `${id} perdió el ancla de parecido`);
+  }
+  // Los otros seis sí son de uso general: no dan por hecho quién está delante.
+  for (const s of STYLES.slice(0, 6)) {
     for (const patron of NADA_PERSONAL) {
-      assert.ok(!patron.test(p), `${id} da por hecho ${patron}`);
+      assert.ok(!patron.test(s.prompt.toLowerCase()), `${s.id} da por hecho ${patron}`);
     }
   }
 });
@@ -451,8 +458,8 @@ test("los prompts no describen a nadie: sirven para cualquiera", () => {
 test("el 7 y el 8 se diferencian en el acabado, plano contra volumen", () => {
   const plano = findStyle("pollito").prompt.toLowerCase();
   const volumen = findStyle("pollito-3d").prompt.toLowerCase();
-  assert.ok(plano.includes("flat cel") && plano.includes("brown outline"));
-  assert.ok(volumen.includes("3d") && !volumen.includes("flat cel"));
+  assert.ok(plano.includes("cel-shaded") && plano.includes("brown outline"));
+  assert.ok(volumen.includes("3d") && !volumen.includes("cel-shaded"));
 });
 
 test("el estilo personalizado hereda backend y prompt del panel", () => {
